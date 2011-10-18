@@ -7,14 +7,20 @@ import android.util.Log;
 public class ProdCon implements Runnable {
 	private boolean isConsumer = false;
 	private ConcurrentLinkedQueue<Integer> queue;
+	private boolean running = true;
 
+	private Object mPauseLock;
+	private boolean mPaused = false;
+	
 	public ProdCon(ConcurrentLinkedQueue<Integer> queue) {
 		setQueue(queue);
+		mPauseLock = new Object();
 	}
 
 	public ProdCon(ConcurrentLinkedQueue<Integer> queue, boolean isConsumer) {
 		setQueue(queue);
 		setConsumer(isConsumer);
+		mPauseLock = new Object();
 	}
 
 	public boolean isConsumer() {
@@ -34,35 +40,46 @@ public class ProdCon implements Runnable {
 	}
 
 	public void run() {
-		if (isConsumer()) {
-			while (true) {
+		String type = isConsumer() ? "Consumer" : "Producer";
+		long start = System.currentTimeMillis();
+		while (running) {
+			if (isConsumer()) {
 				consume();
-			}
-		} else {
-			while (true) {
+			} else {
 				produce();
 			}
-		}
-
-	}
-
-	// private final int UPPER_LIMIT = 10000000;
-	private final int UPPER_LIMIT = 100;
-	private int lastPrime = 2;
-
-	public int getNextPrime() {
-		int i = lastPrime;
-		while (++i <= UPPER_LIMIT) {
-			int i1 = (int) Math.ceil(Math.sqrt(i));
-			while (i1 > 1) {
-				if ((i != i1) && (i % i1 == 0)) {
-					continue;
-				} else {
-					break;
+			synchronized (mPauseLock) {
+				while (mPaused) {
+					Log.v(PrimSum.TAG, type + ": pausiert");
+					try {
+						mPauseLock.wait();
+					} catch (InterruptedException e) {
+					}
 				}
 			}
 		}
-		return i;
+		long end = System.currentTimeMillis();
+		Log.v(PrimSum.TAG, type + ": Fertig.");
+		Log.v(PrimSum.TAG, type + ": Laufzeit war " + (end - start) + " ms.");
+	}
+	
+	/**
+	 * Call this on pause.
+	 */
+	public void onPause() {
+		synchronized (mPauseLock) {
+			mPaused = true;
+		}
+	}
+
+	/**
+	 * Call this on resume.
+	 */
+	public void onResume() {
+		synchronized (mPauseLock) {
+			mPaused = false;
+			mPauseLock.notifyAll();
+		}
 	}
 
 	private void produce() {
@@ -71,15 +88,54 @@ public class ProdCon implements Runnable {
 		synchronized (queue) {
 			queue.notifyAll();
 		}
-		Log.v(PrimSum.TAG, "Producer: " + prime);
+		if (prime >= UPPER_LIMIT) running = false;
 	}
 
 	private void consume() {
 		while (!queue.isEmpty()) {
 			Integer prime = queue.poll();
 			if (prime != null) {
-				Log.v(PrimSum.TAG, "Consumer: " + prime);
+				// Log.v(PrimSum.TAG, "Consumer: " + prime);
 			}
+		}
+	}
+	
+	// private final int UPPER_LIMIT = 10000000;
+	   private final int UPPER_LIMIT = 1000000;
+	private int lastPrime = 1;
+
+	public int getNextPrime() {
+		if (lastPrime >= UPPER_LIMIT)
+			return lastPrime;
+		int i = lastPrime + 1;
+		for (; i < UPPER_LIMIT; i++) {
+			if (isPrime(i))
+				break;
+		}
+		lastPrime = i;
+		return i;
+	}
+
+	/**
+	 * Prüft ob n eine Primzahl ist
+	 * 
+	 * @param n
+	 * @return Boolean
+	 */
+	public boolean isPrime(int n) {
+		if (n < 2) {
+			return false;
+		} else if (n == 2) {
+			return true;
+		} else if (n % 2 == 0) {
+			return false;
+		} else {
+			for (int i = 3; i * i <= n; i += 2) {
+				if (n % i == 0) {
+					return false;
+				}
+			}
+			return true;
 		}
 	}
 }
