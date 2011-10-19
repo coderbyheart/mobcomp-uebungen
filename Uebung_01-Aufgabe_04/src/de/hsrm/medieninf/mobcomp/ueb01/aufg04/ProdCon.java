@@ -1,6 +1,8 @@
 package de.hsrm.medieninf.mobcomp.ueb01.aufg04;
 
+import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CyclicBarrier;
 
 import android.util.Log;
 
@@ -12,15 +14,22 @@ public class ProdCon implements Runnable {
 	private Object mPauseLock;
 	private boolean mPaused = false;
 	
+	private CyclicBarrier barrier;
+	
+	private final int UPPER_LIMIT = 100000;
+	private int consumed = 0;
+	private int lastPrime = 1;
+
 	public ProdCon(ConcurrentLinkedQueue<Integer> queue) {
 		setQueue(queue);
 		mPauseLock = new Object();
 	}
 
-	public ProdCon(ConcurrentLinkedQueue<Integer> queue, boolean isConsumer) {
+	public ProdCon(ConcurrentLinkedQueue<Integer> queue, boolean isConsumer, CyclicBarrier barrier) {
 		setQueue(queue);
 		setConsumer(isConsumer);
 		mPauseLock = new Object();
+		this.barrier = barrier; 
 	}
 
 	public boolean isConsumer() {
@@ -44,7 +53,12 @@ public class ProdCon implements Runnable {
 		long start = System.currentTimeMillis();
 		while (running) {
 			if (isConsumer()) {
-				consume();
+				if (consumed > UPPER_LIMIT) {
+					Log.v(PrimSum.TAG, consumed + " Primzahlen konsumiert");
+					stop();
+				} else {
+					consume();
+				}
 			} else {
 				produce();
 			}
@@ -61,8 +75,16 @@ public class ProdCon implements Runnable {
 		long end = System.currentTimeMillis();
 		Log.v(PrimSum.TAG, type + ": Fertig.");
 		Log.v(PrimSum.TAG, type + ": Laufzeit war " + (end - start) + " ms.");
+		
+		try {
+			barrier.await();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch (BrokenBarrierException e) {
+			e.printStackTrace();
+		}
 	}
-	
+
 	/**
 	 * Call this on pause.
 	 */
@@ -88,27 +110,31 @@ public class ProdCon implements Runnable {
 		synchronized (queue) {
 			queue.notifyAll();
 		}
-		if (prime >= UPPER_LIMIT) running = false;
 	}
 
 	private void consume() {
 		while (!queue.isEmpty()) {
 			Integer prime = queue.poll();
 			if (prime != null) {
+				consumed++;
+				lastPrime = prime;
 				// Log.v(PrimSum.TAG, "Consumer: " + prime);
 			}
 		}
 	}
-	
-	// private final int UPPER_LIMIT = 10000000;
-	   private final int UPPER_LIMIT = 1000000;
-	private int lastPrime = 1;
+
+
+	public int getLastPrime() {
+		return lastPrime;
+	}
+
+	public void setLastPrime(int lastPrime) {
+		this.lastPrime = lastPrime;
+	}
 
 	public int getNextPrime() {
-		if (lastPrime >= UPPER_LIMIT)
-			return lastPrime;
 		int i = lastPrime + 1;
-		for (; i < UPPER_LIMIT; i++) {
+		for (;; i++) {
 			if (isPrime(i))
 				break;
 		}
@@ -137,5 +163,17 @@ public class ProdCon implements Runnable {
 			}
 			return true;
 		}
+	}
+	
+	/**
+	 * Stop den Thread
+	 */
+	public void stop()
+	{
+		running = false;
+	}
+
+	public boolean isRunning() {
+		return running;
 	}
 }
