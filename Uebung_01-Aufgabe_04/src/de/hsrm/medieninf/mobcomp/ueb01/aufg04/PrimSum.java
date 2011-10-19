@@ -34,16 +34,7 @@ public class PrimSum extends Activity {
         		Log.v(TAG, "Stoppe Producer ...");
         		p.stop();
         		Log.v(TAG, "Letzte Primzahl: " + c.getLastPrime());
-        		try {
-					t1.join();
-				} catch (InterruptedException e) {
-					Log.v(TAG, "Fehler beim Joinen von Thread #1");
-				}
-        		try {
-					t2.join();
-				} catch (InterruptedException e) {
-					Log.v(TAG, "Fehler beim Joinen von Thread #2");
-				}
+        		Log.v(TAG, "Beende Activity.");
         		finish();
         	}
         });
