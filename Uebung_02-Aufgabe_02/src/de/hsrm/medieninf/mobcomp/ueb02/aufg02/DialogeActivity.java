@@ -34,6 +34,7 @@ public class DialogeActivity extends Activity {
 	private int progressStatus = 0;
 	private int progressSeconds = 10;
 	private Handler handler = new Handler();
+	private Timer progressTimer = new Timer();
 
 	private static final int DIALOG_WARNING = 1;
 	private static final int DIALOG_TIME = 2;
@@ -125,10 +126,11 @@ public class DialogeActivity extends Activity {
                         }
                     });
 				}
-
+				// Fertig
 				handler.post(new Runnable() {
 					public void run() {
-						progressbar.setVisibility(View.INVISIBLE);
+						progressbar.setVisibility(View.GONE);
+						progressTimer.cancel();
 					}
 				});
 			}
@@ -142,7 +144,6 @@ public class DialogeActivity extends Activity {
 			}
 		}
 		
-		Timer progressTimer = new Timer();
 		progressTimer.schedule(new UpdateProgess(), 0);
 	}
 
