@@ -3,6 +3,8 @@ package de.hsrm.medieninf.mobcomp.ueb02.aufg02;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -12,6 +14,7 @@ import android.app.TimePickerDialog.OnTimeSetListener;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Html;
 import android.util.Log;
 import android.view.View;
@@ -20,12 +23,17 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
 public class DialogeActivity extends Activity {
 	private ListView mainListView;
 	private TextView statusView;
+	private ProgressBar progressbar;
+	private int progressStatus = 0;
+	private int progressSeconds = 10;
+	private Handler handler = new Handler();
 
 	private static final int DIALOG_WARNING = 1;
 	private static final int DIALOG_TIME = 2;
@@ -101,6 +109,41 @@ public class DialogeActivity extends Activity {
 				android.R.layout.simple_list_item_1, activities);
 		mainListView.setAdapter(adapter);
 
+		progressbar = (ProgressBar) findViewById(R.id.main_progressbar);
+		
+		class UpdateProgess extends TimerTask {
+			@Override
+			public void run() {
+				progressbar.setVisibility(View.VISIBLE);
+				while (progressStatus < 100) {
+					doSomeWork();
+					progressStatus++;
+					// Progressbar aktualisieren
+					handler.post(new Runnable() {
+                        public void run() {
+                        	progressbar.setProgress(progressStatus);
+                        }
+                    });
+				}
+
+				handler.post(new Runnable() {
+					public void run() {
+						progressbar.setVisibility(View.INVISIBLE);
+					}
+				});
+			}
+
+			private void doSomeWork() {
+				try {
+					Thread.sleep((progressSeconds * 1000) / 100);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		
+		Timer progressTimer = new Timer();
+		progressTimer.schedule(new UpdateProgess(), 0);
 	}
 
 	@Override
@@ -196,8 +239,8 @@ public class DialogeActivity extends Activity {
 		} else if (requestCode == RESULT_TIME_GET) {
 			if (resultCode == RESULT_OK) {
 				statusView.setText(Html.fromHtml(String.format(getResources()
-						.getString(R.string.status_time_showed_text),
-						data.getAction())));
+						.getString(R.string.status_time_showed_text), data
+						.getAction())));
 			}
 		}
 	}
