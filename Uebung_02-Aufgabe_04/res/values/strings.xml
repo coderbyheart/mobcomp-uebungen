@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Währungsumrechner</string>
+    <string name="conc_eur">Euro</string>
+    <string name="conc_usd">US-Dollar</string>
+    <string name="conc_grd">Drachme</string>
+    <string name="currency_select_dialog_title">Währung auswählen ...</string>
+</resources>
