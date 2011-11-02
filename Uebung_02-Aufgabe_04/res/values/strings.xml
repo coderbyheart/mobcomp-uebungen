@@ -5,4 +5,6 @@
     <string name="conc_usd">US-Dollar</string>
     <string name="conc_grd">Drachme</string>
     <string name="currency_select_dialog_title">Währung auswählen ...</string>
+    <string name="menu_config_currencies">Währungen konfigurieren</string>
+    <string name="menu_quit">Beenden</string>
 </resources>

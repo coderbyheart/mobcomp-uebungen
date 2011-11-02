@@ -3,16 +3,20 @@ package de.hsrm.medieninf.mobcomp.ueb02.aufg03;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -123,19 +127,13 @@ public class WaehrungsUmrechnerActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-
-		Waehrung euro = new Waehrung().setSymbol("€")
-				.setName((String) getResources().getString(R.string.conc_eur))
-				.setRate(1.0);
-		Waehrung usd = new Waehrung().setSymbol("$")
-				.setName((String) getResources().getString(R.string.conc_usd))
-				.setRate(0.7183392);
-		Waehrung grd = new Waehrung().setSymbol("₯")
-				.setName((String) getResources().getString(R.string.conc_grd))
-				.setRate(2.93470286e-6);
-		waehrungen.put(0, euro);
-		waehrungen.put(1, usd);
-		waehrungen.put(2, grd);
+		
+		Rechner rechner = new Rechner(this);
+		List<Waehrung> defaultWaehrungen = rechner.getDefaultCurrencies();
+		
+		waehrungen.put(0, defaultWaehrungen.get(0));
+		waehrungen.put(1, defaultWaehrungen.get(1));
+		waehrungen.put(2, defaultWaehrungen.get(2));
 
 		valueA = (EditText) findViewById(R.id.inputA);
 		valueB = (EditText) findViewById(R.id.inputB);
@@ -153,8 +151,8 @@ public class WaehrungsUmrechnerActivity extends Activity {
 		buttonA.setOnClickListener(scl);
 		buttonB.setOnClickListener(scl);
 
-		setWaehrungA(euro);
-		setWaehrungB(usd);
+		setWaehrungA(defaultWaehrungen.get(0));
+		setWaehrungB(defaultWaehrungen.get(1));
 	}
 
 	public Waehrung getWaehrungA() {
@@ -194,16 +192,45 @@ public class WaehrungsUmrechnerActivity extends Activity {
 							new DialogInterface.OnClickListener() {
 								public void onClick(DialogInterface dialog,
 										int which) {
-									if(clickedButton.equals(buttonA)) {
+									if (clickedButton.equals(buttonA)) {
 										setWaehrungA(waehrungen.get(which));
-										watcherA.afterTextChanged(fieldA.getField().getEditableText());
+										watcherA.afterTextChanged(fieldA
+												.getField().getEditableText());
 									} else {
 										setWaehrungB(waehrungen.get(which));
-										watcherB.afterTextChanged(fieldB.getField().getEditableText());
+										watcherB.afterTextChanged(fieldB
+												.getField().getEditableText());
 									}
 								}
 							}).create();
 		}
 		return null;
+	}
+
+	/**
+	 * Menü erzeugen
+	 */
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.menu, menu);
+		return super.onCreateOptionsMenu(menu);
+	}
+
+	/**
+	 * Wenn ein Menüpunkt ausgewählt wurde ...
+	 */
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.menu_config_currencies:
+			startActivity(new Intent(WaehrungsUmrechnerActivity.this,
+					CurrencyConfigActivity.class));
+			return true;
+		case R.id.menu_quit:
+			finish();
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
 	}
 }
