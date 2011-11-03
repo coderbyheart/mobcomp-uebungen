@@ -3,16 +3,17 @@ package de.hsrm.medieninf.mobcomp.ueb02.aufg03;
 import java.math.BigDecimal;
 import java.security.InvalidParameterException;
 
-public class Waehrung {
+public class Currency {
 	private String symbol;
 	private double rate;
 	private String name;
+	private int id;
 
 	public String getSymbol() {
 		return symbol;
 	}
 
-	public Waehrung setSymbol(String symbol) {
+	public Currency setSymbol(String symbol) {
 		this.symbol = symbol;
 		return this;
 	}
@@ -26,7 +27,7 @@ public class Waehrung {
 	 * 
 	 * @param rate
 	 */
-	public Waehrung setRate(double rate) {
+	public Currency setRate(double rate) {
 		if (rate > 1)
 			throw new InvalidParameterException(
 					"Rate muss zwischen 0 und 1 liegen.");
@@ -38,7 +39,7 @@ public class Waehrung {
 		return name;
 	}
 
-	public Waehrung setName(String name) {
+	public Currency setName(String name) {
 		this.name = name;
 		return this;
 	}
@@ -57,5 +58,13 @@ public class Waehrung {
 
 	public BigDecimal asCurrency(BigDecimal v) {
 		return v.multiply(BigDecimal.valueOf(1.0 / rate));
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 }
