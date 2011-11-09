@@ -80,6 +80,7 @@ public class WaehrungsUmrechnerActivity extends DbActivity {
 
 		@Override
 		public void afterTextChanged(Editable s) {
+			// Alterantive: Checken ob sich update.text ändern würde
 			Log.v(TAG, "UPDATE: " + update.getName());
 			update.getField().removeTextChangedListener(updateWatcher);
 			try {
