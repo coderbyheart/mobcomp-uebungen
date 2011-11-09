@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent" android:layout_height="wrap_content"
+	android:orientation="vertical">
+	<TextView android:layout_height="wrap_content" android:text="@string/label_select"
+		android:textAppearance="?android:attr/textAppearanceLarge"
+		android:layout_width="fill_parent"></TextView>
+	<LinearLayout android:layout_height="wrap_content"
+		android:layout_width="fill_parent" android:id="@+id/linearLayout1">
+		<EditText android:layout_height="wrap_content"
+			android:layout_weight="4" android:layout_width="wrap_content"
+			android:id="@+id/numberInput" android:inputType="number">
+			<requestFocus></requestFocus>
+		</EditText>
+		<Button android:layout_height="wrap_content"
+			android:layout_weight="1" android:layout_width="wrap_content"
+			android:text="@string/button_plus" android:id="@+id/plus_button"></Button>
+		<Button android:layout_height="wrap_content"
+			android:layout_weight="1" android:layout_width="wrap_content"
+			android:text="@string/button_minus" android:id="@+id/minus_button"></Button>
+	</LinearLayout>
+	<Button android:layout_height="wrap_content"
+		android:layout_weight="1" android:layout_width="fill_parent"
+		android:text="@string/button_ok" android:id="@+id/ok_button"></Button>
+	<TableLayout android:layout_height="wrap_content"
+		android:layout_width="fill_parent" android:id="@+id/log_table">
+		<TableRow android:id="@+id/log_table" android:layout_width="wrap_content"
+			android:layout_height="wrap_content">
+			<TextView android:layout_height="wrap_content" android:text="@string/label_try"
+				android:layout_width="wrap_content"></TextView>
+			<TextView android:layout_height="wrap_content" android:text="@string/label_number"
+				android:layout_width="wrap_content"></TextView>
+			<TextView android:layout_height="wrap_content" android:text="@string/label_result"
+				android:layout_width="wrap_content"></TextView>
+		</TableRow>
+		<TableRow android:id="@+id/log_table" android:layout_width="wrap_content"
+			android:layout_height="wrap_content">
+			<TextView android:layout_height="wrap_content" android:text="@string/label_ntry"
+				android:layout_width="wrap_content"></TextView>
+			<TextView android:layout_height="wrap_content" android:text="999"
+				android:layout_width="wrap_content"></TextView>
+			<ImageView android:layout_width="20dp"
+				android:layout_height="20dp" android:id="@+id/imageView1"
+				android:src="@drawable/ok"></ImageView>
+
+		</TableRow>
+	</TableLayout>
+</LinearLayout>

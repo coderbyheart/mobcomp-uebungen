@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Nummern raten</string>
+    <string name="label_select">Bitte wähle eine Nummer zwischen 1 und 1000:</string>
+    <string name="button_minus">-</string>
+    <string name="button_plus">+</string>
+    <string name="button_ok">OK</string>
+    <string name="label_try">Versuch</string>
+    <string name="label_number">Zahl</string>
+    <string name="label_result">Ergebnis</string>
+    <string name="label_ntry">%d.</string>
+    <string name="label_result_too_high">Leider zu hoch! Probier es noch einmal!</string>
+    <string name="label_result_too_low">Leider zu niedrig! Probier es noch einmal!</string>
+    <string name="label_result_good">Glückwunsch! Du hast richtig geraten.</string>
+</resources>
