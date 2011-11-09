@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -22,7 +21,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 
-public class WaehrungsUmrechnerActivity extends Activity {
+public class WaehrungsUmrechnerActivity extends DbActivity {
 	public static final String TAG = "WaehrungsUmrechnerActivity";
 	public static final int DIALOG_CURRENCY = 1;
 
@@ -128,15 +127,23 @@ public class WaehrungsUmrechnerActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		
-		Rechner rechner = new Rechner(this);
-		List<Currency> defaultWaehrungen = rechner.getDefaultCurrencies();
+		valueA = (EditText) findViewById(R.id.inputA);
+		valueB = (EditText) findViewById(R.id.inputB);
+		buttonA = (Button) findViewById(R.id.buttonA);
+		buttonB = (Button) findViewById(R.id.buttonB);
+	}
+	
+	/** Called when the activity is first created. */
+	@Override
+	public void onResume() {
+		super.onResume();
+		
+		List<Currency> defaultWaehrungen = dba.getCurrencies();
 		
 		waehrungen.put(0, defaultWaehrungen.get(0));
 		waehrungen.put(1, defaultWaehrungen.get(1));
 		waehrungen.put(2, defaultWaehrungen.get(2));
-
-		valueA = (EditText) findViewById(R.id.inputA);
-		valueB = (EditText) findViewById(R.id.inputB);
+				
 		fieldA = new CurrencyField("A", valueA);
 		fieldB = new CurrencyField("B", valueB);
 		watcherA = new InputWatcher(fieldA, fieldB);
@@ -145,8 +152,6 @@ public class WaehrungsUmrechnerActivity extends Activity {
 		watcherB.setUpdaterListener(watcherA);
 		valueA.addTextChangedListener(watcherA);
 		valueB.addTextChangedListener(watcherB);
-		buttonA = (Button) findViewById(R.id.buttonA);
-		buttonB = (Button) findViewById(R.id.buttonB);
 		SelectCurrencyListener scl = new SelectCurrencyListener();
 		buttonA.setOnClickListener(scl);
 		buttonB.setOnClickListener(scl);

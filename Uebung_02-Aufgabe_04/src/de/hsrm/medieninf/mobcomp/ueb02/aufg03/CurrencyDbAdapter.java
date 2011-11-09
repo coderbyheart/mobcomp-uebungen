@@ -1,5 +1,8 @@
 package de.hsrm.medieninf.mobcomp.ueb02.aufg03;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -71,7 +74,7 @@ public class CurrencyDbAdapter {
 		return db;
 	}
 
-	public Cursor getCurrencies() {
+	public Cursor getCurrenciesCursor() {
 		String[] cols = new String[] { CURRENCY_KEY_ID, CURRENCY_KEY_SYMBOL,
 				CURRENCY_KEY_RATE, CURRENCY_KEY_NAME };
 		return getDb()
@@ -126,6 +129,27 @@ public class CurrencyDbAdapter {
 		waehrung.setRate(result.getDouble(CURRENCY_COL_RATE));
 		waehrung.setSymbol(result.getString(CURRENCY_COL_SYMBOL));
 		return waehrung;
+	}
+	
+	public List<Currency> getCurrencies() {
+		String[] cols = new String[] { CURRENCY_KEY_ID, CURRENCY_KEY_SYMBOL,
+				CURRENCY_KEY_RATE, CURRENCY_KEY_NAME };
+		Cursor result = getDb().query(CURRENCY_TABLE, cols, null, null, null, null, null);
+		result.moveToFirst();
+		if (result.isAfterLast()) {
+			Log.v(TAG, "Keine Währungen gefunden.");
+			return null;
+		}
+		ArrayList<Currency> currencies = new ArrayList<Currency>();
+		do {
+			Currency waehrung = new Currency();
+			waehrung.setId(result.getInt(CURRENCY_COL_ID));
+			waehrung.setName(result.getString(CURRENCY_COL_NAME));
+			waehrung.setRate(result.getDouble(CURRENCY_COL_RATE));
+			waehrung.setSymbol(result.getString(CURRENCY_COL_SYMBOL));
+			currencies.add(waehrung);
+		} while(result.moveToNext());
+		return currencies;
 	}
 
 	public Currency persist(Currency c) {
