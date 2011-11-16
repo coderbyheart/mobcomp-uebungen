@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TableRow 
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent" 
+	android:layout_height="wrap_content"
+	android:orientation="vertical" 
+	android:id="@+id/tablerow_root"
+	>
+	<TextView 
+		android:layout_height="wrap_content" 
+		android:layout_width="wrap_content" 
+		android:layout_weight="1"
+		android:padding="2dp"
+		android:id="@+id/tablerow_ntry"
+		/>
+	<TextView 
+		android:layout_height="wrap_content" 
+		android:layout_width="wrap_content" 
+		android:layout_weight="1"
+		android:padding="2dp"
+		android:id="@+id/tablerow_guess"
+		/>
+	<ImageView 
+		android:layout_width="20dp" 
+		android:layout_height="20dp"
+		android:layout_weight="1"
+		android:id="@+id/tablerow_icon"
+		/>
+</TableRow>
+
