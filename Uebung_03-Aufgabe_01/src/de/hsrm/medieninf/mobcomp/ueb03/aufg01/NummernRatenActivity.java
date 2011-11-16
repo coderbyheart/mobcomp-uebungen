@@ -1,8 +1,6 @@
 package de.hsrm.medieninf.mobcomp.ueb03.aufg01;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.List;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -13,7 +11,6 @@ import android.os.Handler;
 import android.os.SystemClock;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -29,7 +26,9 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
-import de.hsrm.medieninf.mobcomp.ueb03.aufg01.persistence.Highscore;
+import de.hsrm.medieninf.mobcomp.ueb03.aufg01.entity.Guess;
+import de.hsrm.medieninf.mobcomp.ueb03.aufg01.entity.Highscore;
+import de.hsrm.medieninf.mobcomp.ueb03.aufg01.game.Game;
 import de.hsrm.medieninf.mobcomp.ueb03.aufg01.persistence.HighscoreDbAdapter;
 
 public class NummernRatenActivity extends Activity {
@@ -38,8 +37,6 @@ public class NummernRatenActivity extends Activity {
 	public static final int NEW_HIGHSCORE_DIALOG = 1;
 
 	private BigInteger userNumber;
-	private BigInteger askNumber;
-	private BigInteger limit = BigInteger.valueOf((long) 1000);
 	private TextView number;
 	private Button plus;
 	private Button minus;
@@ -49,11 +46,10 @@ public class NummernRatenActivity extends Activity {
 	private Dialog highscoreEnterDialog;
 	private EditText highscoreNameText;
 	private Button highscoreOkButton;
-	private List<Guess> guesses;
 	private Highscore hs;
 	private Handler handler = new Handler();
+	private Game game;
 	private int ms = 100;
-	private int ntries;
 
 	private class MinusListener implements OnTouchListener, OnClickListener,
 			OnLongClickListener {
@@ -146,11 +142,7 @@ public class NummernRatenActivity extends Activity {
 			public void onClick(View v) {
 				userNumber = BigInteger.valueOf(Long.parseLong(number.getText()
 						.toString()));
-				Log.v("ASK", "" + userNumber + " / " + askNumber);
-				Guess guess = new Guess(userNumber, userNumber
-						.compareTo(askNumber));
-				ntries++;
-				guesses.add(guess);
+				Guess guess = game.createGuess(userNumber);
 				if (guess.isTooLow()) {
 					Toast.makeText(NummernRatenActivity.this,
 							R.string.label_result_too_low, Toast.LENGTH_SHORT)
@@ -174,15 +166,15 @@ public class NummernRatenActivity extends Activity {
 		number.setText(userNumber.toString());
 	}
 
-	synchronized private void decrease() {
+	private void decrease() {
 		if (userNumber.compareTo(BigInteger.ZERO) <= 0)
 			return;
 		userNumber = userNumber.subtract(BigInteger.ONE);
 		updateTextView();
 	}
 
-	synchronized private void increase() {
-		if (userNumber.compareTo(limit) >= 0)
+	private void increase() {
+		if (userNumber.compareTo(game.getLimit()) >= 0)
 			return;
 		userNumber = userNumber.add(BigInteger.ONE);
 		updateTextView();
@@ -209,7 +201,7 @@ public class NummernRatenActivity extends Activity {
 			cicon.setImageDrawable(getResources().getDrawable(R.drawable.down));
 		}
 		
-		cntry.setText(String.valueOf(ntries));
+		cntry.setText(String.valueOf(game.getTries()));
 		cguess.setText(guess.getNumber().toString());
 		
 		table.addView(logtableRow, 1);
@@ -248,7 +240,7 @@ public class NummernRatenActivity extends Activity {
 				public void onClick(View v) {
 					hs = new Highscore();
 					hs.setName(highscoreNameText.getText().toString());
-					hs.setTries(ntries);
+					hs.setTries(game.getTries());
 					new Thread(new Runnable() {
 						@Override
 						public void run() {
@@ -307,10 +299,8 @@ public class NummernRatenActivity extends Activity {
 	
 	private void reset()
 	{
-		ntries = 0;
-		askNumber = BigInteger.valueOf((long) (Math.random() * 1000));
-		userNumber = askNumber;
-		guesses = new ArrayList<Guess>();
+		game = new Game(1000);
+		userNumber = BigInteger.valueOf(500);
 		table.removeViews(1, table.getChildCount() - 1);
 		updateTextView();
 	}

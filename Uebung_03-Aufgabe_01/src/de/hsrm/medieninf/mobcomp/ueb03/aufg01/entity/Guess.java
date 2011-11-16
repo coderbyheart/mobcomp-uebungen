@@ -1,4 +1,4 @@
-package de.hsrm.medieninf.mobcomp.ueb03.aufg01;
+package de.hsrm.medieninf.mobcomp.ueb03.aufg01.entity;
 
 import java.math.BigInteger;
 
