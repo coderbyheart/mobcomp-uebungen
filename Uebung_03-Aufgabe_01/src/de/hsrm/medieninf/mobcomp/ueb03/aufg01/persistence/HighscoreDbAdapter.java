@@ -121,12 +121,12 @@ public class HighscoreDbAdapter {
 		return hs;
 	}
 
-	public List<Highscore> getHighscores() {
+	public List<Highscore> getHighscores(String sort) {
 		ArrayList<Highscore> highscores = new ArrayList<Highscore>();
 		String[] cols = new String[] { KEY_ID, KEY_TRIES, KEY_TIME,
 				KEY_NAME };
 		Cursor result = getDb().query(TABLE, cols, null, null, null,
-				null, KEY_TRIES + " ASC, " + KEY_TIME + " ASC");
+				null, sort + " ASC");
 		result.moveToFirst();
 		if (result.isAfterLast()) {
 			Log.v(TAG, "Keine Highscore gefunden.");
