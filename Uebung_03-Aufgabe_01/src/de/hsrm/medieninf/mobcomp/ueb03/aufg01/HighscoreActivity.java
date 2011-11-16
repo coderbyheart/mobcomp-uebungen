@@ -44,7 +44,7 @@ public class HighscoreActivity extends Activity {
 
 			cntry.setText(String.valueOf(hs.getTries()));
 			cname.setText(hs.getName());
-			cdate.setText(hs.getTimestamp());
+			cdate.setText(String.valueOf(Math.round(hs.getTime() / 1000.0)) + "s");
 
 			table.addView(hsTableRow);
 		}

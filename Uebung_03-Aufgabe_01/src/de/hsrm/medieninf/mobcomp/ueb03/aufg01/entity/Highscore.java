@@ -4,7 +4,7 @@ public class Highscore {
 	private int id;
 	private Integer tries;
 	private String name;
-	private String timestamp;
+	private long time;
 	public Integer getTries() {
 		return tries;
 	}
@@ -17,11 +17,11 @@ public class Highscore {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public String getTimestamp() {
-		return timestamp;
+	public long getTime() {
+		return time;
 	}
-	public void setTimestamp(String timestamp) {
-		this.timestamp = timestamp;
+	public void setTime(long time) {
+		this.time = time;
 	}
 	public int getId() {
 		return id;
