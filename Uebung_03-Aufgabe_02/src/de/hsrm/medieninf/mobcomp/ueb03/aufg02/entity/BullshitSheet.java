@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 public class BullshitSheet {
 	private int id;
+	private int nwords;
 	private String time;
 	private ArrayList<BullshitWord> words;
 	
@@ -29,5 +30,13 @@ public class BullshitSheet {
 
 	public void setTime(String time) {
 		this.time = time;
+	}
+
+	public int getNwords() {
+		return nwords;
+	}
+
+	public void setNwords(int nwords) {
+		this.nwords = nwords;
 	}
 }
