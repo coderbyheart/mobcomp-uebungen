@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <TableLayout
+        android:id="@+id/grid"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@android:color/background_light"
+        >
+
+        <TableRow
+            android:id="@+id/tableRow0"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            >
+
+            <TextView
+                android:id="@+id/cell0"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:text="Long Text is long."
+                android:gravity="center"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:layout_margin="1dp"
+                android:background="@android:color/background_dark"
+                android:layout_weight="1"
+                 />
+
+            <TextView
+                android:id="@+id/cell1"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:text="Long Text is long."
+                android:gravity="center"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:layout_margin="1dp" 
+                android:background="@android:color/background_dark"
+                android:layout_weight="1"
+                />
+
+            <TextView
+                android:id="@+id/cell2"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:text="Long Text is long."
+                android:gravity="center"
+                android:textAppearance="?android:attr/textAppearanceMedium" 
+                android:layout_margin="1dp"
+                android:background="@android:color/background_dark"
+                android:layout_weight="1"
+                />
+            
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRow1"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/cell3"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:text="Long Text is long."
+                android:gravity="center"
+                android:textAppearance="?android:attr/textAppearanceMedium" 
+                android:layout_margin="1dp"
+                android:background="@android:color/background_dark"
+                android:layout_weight="1"
+                />
+
+            <TextView
+                android:id="@+id/cell4"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:text="Long Text is long."
+                android:gravity="center"
+                android:textAppearance="?android:attr/textAppearanceMedium" 
+                android:layout_margin="1dp"
+                android:background="@android:color/background_dark"
+                android:layout_weight="1"
+                />
+
+            <TextView
+                android:id="@+id/cell5"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:text="Long Text is long."
+                android:gravity="center"
+                android:textAppearance="?android:attr/textAppearanceMedium" 
+                android:layout_margin="1dp"
+                android:background="@android:color/background_dark"
+                android:layout_weight="1"
+                />
+
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRow2"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/cell6"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:text="Long Text is long."
+                android:gravity="center"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:layout_margin="1dp" 
+                android:background="@android:color/background_dark"
+                android:layout_weight="1"
+                />
+
+            <TextView
+                android:id="@+id/cell7"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:text="Long Text is long."
+                android:gravity="center"
+                android:textAppearance="?android:attr/textAppearanceMedium" 
+                android:layout_margin="1dp"
+                android:background="@android:color/background_dark"
+                android:layout_weight="1"
+                />
+
+            <TextView
+                android:id="@+id/cell8"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:text="Long Text is long."
+                android:gravity="center"
+                android:textAppearance="?android:attr/textAppearanceMedium" 
+                android:layout_margin="1dp"
+                android:background="@android:color/background_dark"
+                android:layout_weight="1"
+                />
+
+        </TableRow>
+
+    </TableLayout>
+
+</LinearLayout>

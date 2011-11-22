@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Bullshit Bingo</string>
+    <string name="app_restart">Neustart</string>
+
+    <string-array name="bullshit">
+        <item>Kooperation</item>
+        <item>Fusion</item>
+        <item>strategische Partnerschaft</item>
+        <item>Vision</item>
+        <item>Corporate Identity</item>
+        <item>Innovativ</item>
+        <item>Zielführend</item>
+        <item>Strategie</item>
+        <item>Synergie</item>
+        <item>Outsourcing</item>
+        <item>Evaluieren</item>
+        <item>Workflow</item>
+        <item>Kernkompetenz</item>
+        <item>Changemanagement</item>
+        <item>360°-Beurteilung</item>
+        <item>Produktionsknowhow</item>
+        <item>multifunktionale Arbeitsgruppe</item>
+        <item>Strategiekonzept</item>
+        <item>Six Sigma</item>
+        <item>Kaizen</item>
+    </string-array>
+
+</resources>
