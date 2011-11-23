@@ -1,6 +1,7 @@
 package de.hsrm.medieninf.mobcomp.ueb03.aufg02.persistence;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import android.content.ContentValues;
@@ -10,9 +11,9 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
+import de.hsrm.medieninf.mobcomp.ueb03.aufg02.entity.Entity;
 import de.hsrm.medieninf.mobcomp.ueb03.aufg02.entity.Sheet;
 import de.hsrm.medieninf.mobcomp.ueb03.aufg02.entity.Word;
-import de.hsrm.medieninf.mobcomp.ueb03.aufg02.entity.Entity;
 
 public class DbAdapter {
 	private static final String DB_FILENAME = "db.db";
@@ -21,20 +22,23 @@ public class DbAdapter {
 	private DBHelper dbHelper;
 	
 	// Tabelle für Blätter
-	private static final String SHEET_TABLE = "bullshit_sheet";
+	private static final String SHEET_TABLE = "sheet";
 	public static final int SHEET_COL_ID = 0;
 	public static final int SHEET_COL_NWORDS = 1;
 	public static final int SHEET_COL_CREATION_TIME = 2;
 	public static final String SHEET_KEY_ID = "_id";
 	public static final String SHEET_KEY_NWORDS = "nwords";
 	public static final String SHEET_KEY_CREATION_TIME = "creationTime";
-	private static final String SHEET_SQL_CREATE = "CREATE TABLE " + SHEET_TABLE + "("
-			+ SHEET_KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT" + ", " + SHEET_KEY_NWORDS
-			+ " INTEGER NOT NULL" + ", " + SHEET_KEY_CREATION_TIME + " STRING NOT NULL"
-			+ ", " + ")";
+	private static final String SHEET_SQL_CREATE = 
+		"CREATE TABLE " 
+		+ SHEET_TABLE + "("
+		+ SHEET_KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT"
+		+ ", " + SHEET_KEY_NWORDS + " INTEGER NOT NULL" 
+		+ ", " + SHEET_KEY_CREATION_TIME + " STRING NOT NULL"
+		+ ")";
 	
 	// Tabelle für Wörter auf Blättern
-	public static final String WORD_TABLE = "bullshit_word";
+	public static final String WORD_TABLE = "word";
 	public static final int WORD_COL_ID = 0;
 	public static final int WORD_COL_SHEET = 1;
 	public static final int WORD_COL_WORD = 2;
@@ -45,14 +49,15 @@ public class DbAdapter {
 	public static final String WORD_KEY_WORD = "word";
 	public static final String WORD_KEY_HEARD_TIME = "heardTime";
 	public static final String WORD_KEY_CREATION_TIME = "creationTime";
-	public static final String WORD_SQL_CREATE = "CREATE TABLE "
-			+ WORD_TABLE + "(" 
-			+ WORD_KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT" + ", "
-			+ WORD_KEY_SHEET + " INTEGER " + ", "
-			+ WORD_KEY_WORD + " STRING NOT NULL" + ", "
-			+ WORD_KEY_HEARD_TIME + " STRING NULL" + ", "
-			+ WORD_KEY_CREATION_TIME + " STRING NOT NULL" + ", "
-			+ ")";
+	public static final String WORD_SQL_CREATE = 
+		"CREATE TABLE "
+		+ WORD_TABLE + "(" 
+		+ WORD_KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT"
+		+ ", " + WORD_KEY_SHEET + " INTEGER "
+		+ ", " + WORD_KEY_WORD + " STRING NOT NULL"
+		+ ", " + WORD_KEY_HEARD_TIME + " STRING NULL"
+		+ ", " + WORD_KEY_CREATION_TIME + " STRING NOT NULL"
+		+ ")";
 	
 	private static class DBHelper extends SQLiteOpenHelper {
 
@@ -118,11 +123,11 @@ public class DbAdapter {
 
 	public Sheet getSheet(int id) {
 		Cursor result = getSheetCursor(id);
-		Sheet entry = new Sheet();
-		entry.setId(id);
-		entry.setCreationTime(result.getString(SHEET_COL_CREATION_TIME));
-		entry.setNumberOfWords(result.getInt(SHEET_COL_NWORDS));
-		return entry;
+		Sheet item = new Sheet();
+		item.setId(id);
+		item.setCreationTime(result.getString(SHEET_COL_CREATION_TIME));
+		item.setNumberOfWords(result.getInt(SHEET_COL_NWORDS));
+		return item;
 	}
 
 	public Word getWord(int id) {
@@ -140,10 +145,10 @@ public class DbAdapter {
 		}
 		Entity sheet = getSheet(result
 				.getInt(WORD_COL_SHEET));
-		Word entry = new Word();
-		entry.setId(id);
-		entry.setSheet(sheet);
-		return entry;
+		Word item = new Word();
+		item.setId(id);
+		item.setSheet(sheet);
+		return item;
 	}
 	
 	public Cursor getSheetsCursor() {
@@ -164,33 +169,47 @@ public class DbAdapter {
 		ArrayList<Sheet> sheets = new ArrayList<Sheet>();
 		Cursor result = getSheetsCursor();
 		do {
-			Sheet entry = new Sheet();
-			entry.setId(result.getInt(SHEET_COL_ID));
-			sheets.add(entry);
+			Sheet item = new Sheet();
+			item.setId(result.getInt(SHEET_COL_ID));
+			sheets.add(item);
 		} while (result.moveToNext() && sheets.size() < 10);
 		return sheets;
 	}
 
-	public Entity persist(Entity entry) {
-		ContentValues entryValues = new ContentValues();
-		if (entry.getId() > 0) {
-			entryValues.put(SHEET_KEY_ID, entry.getId());
-			db.update(SHEET_TABLE, entryValues, SHEET_KEY_ID + "=" + entry.getId(), null);
+	public Sheet persist(Sheet item) {
+		ContentValues itemValues = new ContentValues();
+		itemValues.put(SHEET_KEY_NWORDS, item.getNumberOfWords());
+		itemValues.put(SHEET_KEY_CREATION_TIME, new Date().toGMTString());
+		return (Sheet) persist(item, itemValues, SHEET_TABLE, SHEET_KEY_ID);
+	}
+	
+	public Word persist(Word item) {
+		ContentValues itemValues = new ContentValues();
+		itemValues.put(WORD_KEY_SHEET, item.getSheet().getId());
+		itemValues.put(WORD_KEY_WORD, item.getWord());
+		itemValues.put(WORD_KEY_CREATION_TIME, new Date().toGMTString());
+		return (Word) persist(item, itemValues, WORD_TABLE, WORD_KEY_ID);
+	}
+	
+	private Entity persist(Entity item, ContentValues itemValues, String table, String idKey) {
+		if (item.getId() > 0) {
+			itemValues.put(SHEET_KEY_ID, item.getId());
+			db.update(table, itemValues, idKey + "=" + item.getId(), null);
 		} else {
-			int id = (int) db.insert(SHEET_TABLE, null, entryValues);
-			entry.setId(id);
+			int id = (int) db.insert(table, null, itemValues);
+			item.setId(id);
 		}
-		return entry;
+		return item;
 	}
 
-	public void remove(Sheet entry) {
+	public void remove(Sheet item) {
 		db.delete(WORD_TABLE,
-				WORD_KEY_SHEET + "=" + entry.getId(), null);
-		db.delete(SHEET_TABLE, SHEET_KEY_ID + "=" + entry.getId(), null);
+				WORD_KEY_SHEET + "=" + item.getId(), null);
+		db.delete(SHEET_TABLE, SHEET_KEY_ID + "=" + item.getId(), null);
 	}
 
-	public void remove(Word entry) {
+	public void remove(Word item) {
 		db.delete(WORD_TABLE, WORD_KEY_ID
-				+ "=" + entry.getId(), null);
+				+ "=" + item.getId(), null);
 	}
 }

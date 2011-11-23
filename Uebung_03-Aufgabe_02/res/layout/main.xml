@@ -11,6 +11,7 @@
         android:background="@android:color/background_light"
         >
 
+<!-- 
         <TableRow
             android:id="@+id/tableRow0"
             android:layout_width="fill_parent"
@@ -143,7 +144,7 @@
                 />
 
         </TableRow>
-
+ -->
     </TableLayout>
 
 </LinearLayout>
