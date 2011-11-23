@@ -1,0 +1,31 @@
+package de.hsrm.medieninf.mobcomp.ueb03.aufg02.entity;
+
+public class Word extends Entity {
+	private Entity sheet;
+	private String word;
+	private String heardTime;
+
+	public Entity getSheet() {
+		return sheet;
+	}
+
+	public void setSheet(Entity sheet) {
+		this.sheet = sheet;
+	}
+
+	public String getWord() {
+		return word;
+	}
+
+	public void setWord(String word) {
+		this.word = word;
+	}
+
+	public String getHeardTime() {
+		return heardTime;
+	}
+
+	public void setHeardTime(String heardTime) {
+		this.heardTime = heardTime;
+	}
+}
