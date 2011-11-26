@@ -2,9 +2,14 @@ package de.hsrm.medieninf.mobcomp.ueb03.aufg02.entity;
 
 import java.util.ArrayList;
 
+/**
+ * Ein Spielblatt
+ * 
+ * @author Markus Tacker <m@coderbyheart.de>
+ */
 public class Sheet extends Entity {
 	private int numberOfWords;
-	private int numberOfHeardWords;
+	private int numberOfheardWords;
 	private ArrayList<Word> words;
 	
 	public ArrayList<Word> getWords() {
@@ -24,15 +29,14 @@ public class Sheet extends Entity {
 	}
 
 	public int getNumberOfHeardWords() {
-		return numberOfHeardWords;
+		return numberOfheardWords;
 	}
 
-	public void setNumberOfHeardWords(int numberOfHeardWords) {
-		this.numberOfHeardWords = numberOfHeardWords;
+	public void setNumberOfHeardWords(int numberOfCompletedWords) {
+		this.numberOfheardWords = numberOfCompletedWords;
 	}
-	
-	public boolean bingo()
-	{
-		return getNumberOfHeardWords() == getNumberOfWords();
+
+	public boolean bingo() {
+		return getNumberOfHeardWords() >= getNumberOfWords();
 	}
 }

@@ -12,6 +12,11 @@ import de.hsrm.medieninf.mobcomp.ueb03.aufg02.R;
 import de.hsrm.medieninf.mobcomp.ueb03.aufg02.entity.Sheet;
 import de.hsrm.medieninf.mobcomp.ueb03.aufg02.entity.Word;
 
+/**
+ * Content-Provider für die Bullshit-Bingo-Datenbank
+ * 
+ * @author Markus Tacker <m@coderbyheart.de>
+ */
 public class Provider extends ContentProvider {
 
 	private static final String AUTHORITY = "de.hsrm.medieninf.mobcomp.ueb03.aufg02.provider.content";
@@ -26,10 +31,25 @@ public class Provider extends ContentProvider {
 	private DbAdapter dbc;
 	static {
 		uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+		/**
+		 * Liste mit allen Spielblättern
+		 */
 		uriMatcher.addURI(AUTHORITY, "sheet", SHEET_LIST);
+		/**
+		 * Ein Spielblattes
+		 */
 		uriMatcher.addURI(AUTHORITY, "sheet/#", SHEET_ITEM);
+		/**
+		 * Die Worte eines Spielblattes
+		 */
 		uriMatcher.addURI(AUTHORITY, "sheet/#/word", SHEET_WORDS);
+		/**
+		 * Ein Wort
+		 */
 		uriMatcher.addURI(AUTHORITY, "word/#", WORD_ITEM);
+		/**
+		 * Allgemeine Infos
+		 */
 		uriMatcher.addURI(AUTHORITY, "info", INFO_LIST);
 	}
 	private static final String VND_SHEET_ITEM = "vnd.android.cursor.item/vnd.de.hsrm.medieninf.mobcomp.ueb03.aufg02.sheet";
