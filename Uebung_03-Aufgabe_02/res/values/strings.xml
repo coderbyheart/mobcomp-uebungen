@@ -26,5 +26,8 @@
         <item>Six Sigma</item>
         <item>Kaizen</item>
     </string-array>
+    <string name="menu_restart">Neu starten</string>
+    <string name="ask_fields">Anzahl der Felder auswählen:</string>
+    <string name="button_ok">Ok</string>
 
 </resources>
