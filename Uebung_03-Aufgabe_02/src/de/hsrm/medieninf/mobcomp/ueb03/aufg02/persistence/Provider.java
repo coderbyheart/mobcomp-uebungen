@@ -131,6 +131,7 @@ public class Provider extends ContentProvider {
 					randKey = Double.valueOf(Math.random() * bullshitWords.length).intValue();
 				} while(usedWords.contains(randKey));
 				bsw.setWord(bullshitWords[randKey]);
+				usedWords.add(randKey);
 				dbc.persist(bsw);
 			}
 
