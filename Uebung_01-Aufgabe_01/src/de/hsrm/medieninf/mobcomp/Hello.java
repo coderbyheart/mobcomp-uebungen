@@ -1,5 +1,6 @@
-package de.hsrm.medieninf.mobcomp.ueb01;
+package de.hsrm.medieninf.mobcomp;
 
+import de.hsrm.medieninf.mobcomp.ueb01.R;
 import android.app.Activity;
 import android.os.Bundle;
 
