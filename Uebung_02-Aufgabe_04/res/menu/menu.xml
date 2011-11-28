@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item 
+    	android:id="@+id/menu_config_currencies"
+    	android:title="@string/menu_config_currencies"
+    	android:icon="@android:drawable/ic_menu_preferences"
+    	></item>
+   	<item 
+    	android:id="@+id/menu_quit"
+    	android:title="@string/menu_quit"
+    	android:icon="@android:drawable/ic_menu_close_clear_cancel"
+    	></item>
+</menu>
