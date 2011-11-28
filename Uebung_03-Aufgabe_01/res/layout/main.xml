@@ -44,6 +44,13 @@
 				/>
 		</TableRow>
 	</TableLayout>
+	<SeekBar 
+		android:id="@+id/seeker" 
+		android:layout_height="wrap_content" 
+		android:layout_width="fill_parent"
+		android:layout_marginLeft="5dp"
+		android:layout_marginRight="5dp"
+		/>
 	<Button 
 		android:layout_height="wrap_content"
 		android:layout_width="fill_parent"

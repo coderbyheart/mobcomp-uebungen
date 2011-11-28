@@ -22,6 +22,8 @@ import android.view.View.OnTouchListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -33,7 +35,7 @@ import de.hsrm.medieninf.mobcomp.ueb03.aufg01.persistence.HighscoreDbAdapter;
 
 public class NummernRatenActivity extends Activity {
 	/** Called when the activity is first created. */
-	
+
 	public static final int NEW_HIGHSCORE_DIALOG = 1;
 
 	private BigInteger userNumber;
@@ -49,6 +51,7 @@ public class NummernRatenActivity extends Activity {
 	private Highscore hs;
 	private Handler handler = new Handler();
 	private Game game;
+	private SeekBar seeker;
 	private int ms = 100;
 
 	private class MinusListener implements OnTouchListener, OnClickListener,
@@ -125,7 +128,8 @@ public class NummernRatenActivity extends Activity {
 		ok = (Button) findViewById(R.id.ok_button);
 		table = (TableLayout) findViewById(R.id.log_table);
 		inflater = getLayoutInflater();
-		
+		seeker = (SeekBar) findViewById(R.id.seeker);
+
 		MinusListener ml = new MinusListener();
 		MinusListener pl = new PlusListener();
 		minus.setOnTouchListener(ml);
@@ -140,17 +144,18 @@ public class NummernRatenActivity extends Activity {
 		ok.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				userNumber = BigInteger.valueOf(Long.parseLong(number.getText()
-						.toString()));
+				readUserNumber();
 				Guess guess = game.createGuess(userNumber);
 				if (guess.isTooLow()) {
 					Toast.makeText(NummernRatenActivity.this,
 							R.string.label_result_too_low, Toast.LENGTH_SHORT)
 							.show();
+					updateSeeker();
 				} else if (guess.isTooHigh()) {
 					Toast.makeText(NummernRatenActivity.this,
 							R.string.label_result_too_high, Toast.LENGTH_SHORT)
 							.show();
+					updateSeeker();
 				} else {
 					showDialog(NEW_HIGHSCORE_DIALOG);
 				}
@@ -158,8 +163,42 @@ public class NummernRatenActivity extends Activity {
 			}
 		});
 
+		seeker.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+
+			@Override
+			public void onStopTrackingTouch(SeekBar seekBar) {
+				setUserNumber(game.getMinHint().add(BigInteger.valueOf(seekBar.getProgress())));
+			}
+
+			@Override
+			public void onStartTrackingTouch(SeekBar seekBar) {
+			}
+
+			@Override
+			public void onProgressChanged(SeekBar seekBar, int progress,
+					boolean fromUser) {
+				setUserNumber(game.getMinHint().add(BigInteger.valueOf(progress)));
+			}
+		});
+		
+		number.addTextChangedListener(new TextWatcher() {
+			
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+			}
+			
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count,
+					int after) {
+			}
+			
+			@Override
+			public void afterTextChanged(Editable s) {
+				seeker.setProgress(Integer.valueOf(s.toString()) - game.getMinHint().intValue());
+			}
+		});
+		
 		reset();
-		updateTextView();
 	}
 
 	private void updateTextView() {
@@ -169,15 +208,25 @@ public class NummernRatenActivity extends Activity {
 	private void decrease() {
 		if (userNumber.compareTo(BigInteger.ZERO) <= 0)
 			return;
-		userNumber = userNumber.subtract(BigInteger.ONE);
+		setUserNumber(userNumber.subtract(BigInteger.ONE));
+	}
+	
+	private void setUserNumber(BigInteger userNumber)
+	{
+		this.userNumber = userNumber;
 		updateTextView();
+	}
+	
+	private void readUserNumber()
+	{
+		this.userNumber = BigInteger.valueOf(Long.parseLong(number.getText()
+				.toString()));
 	}
 
 	private void increase() {
 		if (userNumber.compareTo(game.getLimit()) >= 0)
 			return;
-		userNumber = userNumber.add(BigInteger.ONE);
-		updateTextView();
+		setUserNumber(userNumber.add(BigInteger.ONE));
 	}
 
 	private int getMs() {
@@ -187,12 +236,16 @@ public class NummernRatenActivity extends Activity {
 	}
 
 	private void updateGuessView(Guess guess) {
-		TableRow logtableRow = (TableRow)inflater.inflate(R.layout.tablerow, table, false);
-		
-		TextView cntry = (TextView)logtableRow.findViewById(R.id.tablerow_ntry);
-		TextView cguess = (TextView)logtableRow.findViewById(R.id.tablerow_guess);
-		ImageView cicon = (ImageView)logtableRow.findViewById(R.id.tablerow_icon);
-		
+		TableRow logtableRow = (TableRow) inflater.inflate(R.layout.tablerow,
+				table, false);
+
+		TextView cntry = (TextView) logtableRow
+				.findViewById(R.id.tablerow_ntry);
+		TextView cguess = (TextView) logtableRow
+				.findViewById(R.id.tablerow_guess);
+		ImageView cicon = (ImageView) logtableRow
+				.findViewById(R.id.tablerow_icon);
+
 		if (guess.isGood()) {
 			cicon.setImageDrawable(getResources().getDrawable(R.drawable.ok));
 		} else if (guess.isTooHigh()) {
@@ -200,41 +253,44 @@ public class NummernRatenActivity extends Activity {
 		} else if (guess.isTooLow()) {
 			cicon.setImageDrawable(getResources().getDrawable(R.drawable.down));
 		}
-		
+
 		cntry.setText(String.valueOf(game.getTries()));
 		cguess.setText(guess.getNumber().toString());
-		
+
 		table.addView(logtableRow, 1);
 	}
-	
+
 	@Override
 	protected Dialog onCreateDialog(int id) {
-		switch(id) {
+		switch (id) {
 		case NEW_HIGHSCORE_DIALOG:
 			highscoreEnterDialog = new Dialog(this);
 			highscoreEnterDialog.setContentView(R.layout.newhighscoredialog);
 			highscoreEnterDialog.setTitle(R.string.newhighscoredialog_title);
-			
-			highscoreOkButton = ((Button)highscoreEnterDialog.findViewById(R.id.ok_button));
+
+			highscoreOkButton = ((Button) highscoreEnterDialog
+					.findViewById(R.id.ok_button));
 			highscoreOkButton.setEnabled(false);
-			
-			highscoreNameText = (EditText)highscoreEnterDialog.findViewById(R.id.name_text);
+
+			highscoreNameText = (EditText) highscoreEnterDialog
+					.findViewById(R.id.name_text);
 			highscoreNameText.addTextChangedListener(new TextWatcher() {
 				@Override
-				public void onTextChanged(CharSequence s, int start, int before, int count) {
+				public void onTextChanged(CharSequence s, int start,
+						int before, int count) {
 				}
-				
+
 				@Override
-				public void beforeTextChanged(CharSequence s, int start, int count,
-						int after) {
+				public void beforeTextChanged(CharSequence s, int start,
+						int count, int after) {
 				}
-				
+
 				@Override
 				public void afterTextChanged(Editable s) {
 					highscoreOkButton.setEnabled(s.length() > 0);
 				}
 			});
-			
+
 			highscoreOkButton.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -244,7 +300,8 @@ public class NummernRatenActivity extends Activity {
 					new Thread(new Runnable() {
 						@Override
 						public void run() {
-							HighscoreDbAdapter dba = new HighscoreDbAdapter(NummernRatenActivity.this).open();
+							HighscoreDbAdapter dba = new HighscoreDbAdapter(
+									NummernRatenActivity.this).open();
 							dba.persist(hs);
 							dba.close();
 							showHighscore();
@@ -254,18 +311,19 @@ public class NummernRatenActivity extends Activity {
 					reset();
 				}
 			});
-			
-			((Button)highscoreEnterDialog.findViewById(R.id.abort_button)).setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					highscoreEnterDialog.cancel();
-				}
-			});
+
+			((Button) highscoreEnterDialog.findViewById(R.id.abort_button))
+					.setOnClickListener(new OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							highscoreEnterDialog.cancel();
+						}
+					});
 			return highscoreEnterDialog;
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Menü erzeugen
 	 */
@@ -274,7 +332,7 @@ public class NummernRatenActivity extends Activity {
 		getMenuInflater().inflate(R.menu.menu, menu);
 		return super.onCreateOptionsMenu(menu);
 	}
-	
+
 	/**
 	 * Wenn ein Menüpunkt ausgewählt wurde ...
 	 */
@@ -288,20 +346,25 @@ public class NummernRatenActivity extends Activity {
 			return super.onOptionsItemSelected(item);
 		}
 	}
-	
-	private void showHighscore()
-	{
+
+	private void showHighscore() {
 		Intent intent = new Intent(Intent.ACTION_VIEW);
-		Uri uri = Uri.parse("highscore://de.hsrm.medieninf.mobcomp.ueb03.aufg01/");
+		Uri uri = Uri
+				.parse("highscore://de.hsrm.medieninf.mobcomp.ueb03.aufg01/");
 		intent.setData(uri);
 		startActivity(intent);
 	}
-	
-	private void reset()
-	{
+
+	private void reset() {
 		game = new Game(1000);
-		userNumber = BigInteger.valueOf(500);
 		table.removeViews(1, table.getChildCount() - 1);
-		updateTextView();
+		setUserNumber(BigInteger.valueOf(500));
+		updateSeeker();
+	}
+
+	private void updateSeeker() {
+		// Seeker geht von 0 bis x
+		seeker.setMax(game.getMaxHint().subtract(game.getMinHint()).intValue());
+		seeker.setProgress(userNumber.subtract(game.getMinHint()).intValue());
 	}
 }
