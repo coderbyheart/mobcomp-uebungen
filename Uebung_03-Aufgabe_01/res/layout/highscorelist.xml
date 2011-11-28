@@ -18,20 +18,49 @@
 				android:layout_width="fill_parent" 
 				android:layout_height="wrap_content"
 				>
-				<TextView
+				<LinearLayout
+					android:orientation="horizontal"
 					android:layout_height="wrap_content" 				
 					android:layout_width="wrap_content"
 					android:layout_weight="1"
 					android:padding="2dp"
-					android:text="@string/label_ntries"
-					/>
-				<TextView 
-					android:layout_height="wrap_content"
+					android:id="@+id/tablerow_sort_tries_cell" 
+					>
+					<ImageView 
+						android:layout_width="20dp" 
+						android:layout_height="20dp"
+						android:padding="5dp"
+						android:id="@+id/tablerow_sort_tries_icon"
+						android:src="@android:drawable/arrow_down_float"
+						/>
+					<TextView
+						android:layout_height="wrap_content" 				
+						android:layout_width="wrap_content"
+						android:text="@string/label_ntries"
+						/>
+				</LinearLayout>
+				<LinearLayout
+					android:orientation="horizontal"
+					android:layout_height="wrap_content" 				
 					android:layout_width="wrap_content"
-					android:layout_weight="2"
-					android:padding="2dp"
-					android:text="@string/label_time"
-					/>
+					android:layout_weight="1"
+					android:padding="2dp" 
+					android:id="@+id/tablerow_sort_time_cell"
+					>
+					<ImageView 
+						android:layout_width="20dp" 
+						android:layout_height="20dp"
+						android:padding="5dp"
+						android:id="@+id/tablerow_sort_time_icon"
+						android:src="@android:drawable/arrow_down_float"
+						android:visibility="invisible"
+						/>
+					<TextView 
+						android:layout_height="wrap_content"
+						android:layout_width="wrap_content"
+						android:text="@string/label_time"
+						/>
+				</LinearLayout>
 				<TextView 
 					android:layout_height="wrap_content"
 					android:layout_width="wrap_content"
