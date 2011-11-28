@@ -12,5 +12,6 @@
 			</intent-filter>
 		</activity>
 		<activity android:name=".DirectionActivity" />
+		<activity android:name=".ShowTimeActivity" />
 	</application>
 </manifest>

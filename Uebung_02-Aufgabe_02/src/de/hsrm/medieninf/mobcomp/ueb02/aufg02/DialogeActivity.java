@@ -30,8 +30,9 @@ public class DialogeActivity extends Activity {
 	private static final int DIALOG_WARNING = 1;
 	private static final int DIALOG_TIME = 2;
 
-    static final private int RESULT_GET = 3;
-	
+	static final private int RESULT_DIRECTION_GET = 3;
+	static final private int RESULT_TIME_GET = 4;
+
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -63,15 +64,25 @@ public class DialogeActivity extends Activity {
 				/* Auswahl-Activity starten */
 				if (text.equals(getResources().getString(
 						R.string.select_button_text))) {
-					Intent intent = new Intent(DialogeActivity.this, DirectionActivity.class);
+					Intent intent = new Intent(DialogeActivity.this,
+							DirectionActivity.class);
 					// startActivity(intent);
-					startActivityForResult(intent, RESULT_GET);
+					startActivityForResult(intent, RESULT_DIRECTION_GET);
 					return;
 				}
-				/* Datum auswählen */
+				/* Uhrzeit auswählen */
 				if (text.equals(getResources().getString(
 						R.string.time_button_text))) {
 					showDialog(DIALOG_TIME);
+					return;
+				}
+				/* Uhrzeit anzeigen */
+				if (text.equals(getResources().getString(
+						R.string.time_button_text2))) {
+					Intent intent = new Intent(DialogeActivity.this,
+							ShowTimeActivity.class);
+					// startActivity(intent);
+					startActivityForResult(intent, RESULT_TIME_GET);
 					return;
 				}
 			}
@@ -83,6 +94,7 @@ public class DialogeActivity extends Activity {
 		activities.add(getResources().getString(R.string.warning_button_text));
 		activities.add(getResources().getString(R.string.select_button_text));
 		activities.add(getResources().getString(R.string.time_button_text));
+		activities.add(getResources().getString(R.string.time_button_text2));
 		activities.add(getResources().getString(R.string.exit_button_text));
 
 		ListAdapter adapter = new ArrayAdapter<String>(this,
@@ -143,43 +155,50 @@ public class DialogeActivity extends Activity {
 			OnTimeSetListener otsl = new TimePickerDialog.OnTimeSetListener() {
 				@Override
 				public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-					statusView.setText(Html.fromHtml(String
-							.format(getResources()
-									.getString(
-											R.string.status_time_selected_text),hourOfDay,minute)));
+					statusView.setText(Html.fromHtml(String.format(
+							getResources().getString(
+									R.string.status_time_selected_text),
+							hourOfDay, minute)));
 				}
 			};
-			TimePickerDialog tpd = new TimePickerDialog(DialogeActivity.this, otsl, currDate.getHours(), currDate.getMinutes(), true);
+			TimePickerDialog tpd = new TimePickerDialog(DialogeActivity.this,
+					otsl, currDate.getHours(), currDate.getMinutes(), true);
 			return tpd;
 		}
 		return null;
 	}
-	
+
 	/**
-     * This method is called when the sending activity has finished, with the
-     * result it supplied.
-     * 
-     * @param requestCode The original request code as given to
-     *                    startActivity().
-     * @param resultCode From sending activity as per setResult().
-     * @param data From sending activity as per setResult().
-     */
-    @Override
-	protected void onActivityResult(int requestCode, int resultCode,
-		Intent data) {
-        if (requestCode == RESULT_GET) {
-            // This is a standard resultCode that is sent back if the
-            // activity doesn't supply an explicit result.  It will also
-            // be returned if the activity failed to launch.
-            if (resultCode == RESULT_CANCELED) {
-            // Our protocol with the sending activity is that it will send
-            // text in 'data' as its result.
-            } else {
-            	statusView.setText(Html.fromHtml(String
-						.format(getResources()
-								.getString(
-										R.string.status_direction_selected_text), data.getAction())));
-            }
-        }
-    }
+	 * This method is called when the sending activity has finished, with the
+	 * result it supplied.
+	 * 
+	 * @param requestCode
+	 *            The original request code as given to startActivity().
+	 * @param resultCode
+	 *            From sending activity as per setResult().
+	 * @param data
+	 *            From sending activity as per setResult().
+	 */
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == RESULT_DIRECTION_GET) {
+			// This is a standard resultCode that is sent back if the
+			// activity doesn't supply an explicit result. It will also
+			// be returned if the activity failed to launch.
+			if (resultCode == RESULT_CANCELED) {
+				// Our protocol with the sending activity is that it will send
+				// text in 'data' as its result.
+			} else {
+				statusView.setText(Html.fromHtml(String.format(getResources()
+						.getString(R.string.status_direction_selected_text),
+						data.getAction())));
+			}
+		} else if (requestCode == RESULT_TIME_GET) {
+			if (resultCode == RESULT_OK) {
+				statusView.setText(Html.fromHtml(String.format(getResources()
+						.getString(R.string.status_time_showed_text),
+						data.getAction())));
+			}
+		}
+	}
 }
