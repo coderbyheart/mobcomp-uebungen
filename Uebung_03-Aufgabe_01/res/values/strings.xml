@@ -14,7 +14,7 @@
     <string name="label_result_too_high">Leider zu hoch! Probier es noch einmal!</string>
     <string name="label_result_too_low">Leider zu niedrig! Probier es noch einmal!</string>
     <string name="label_result_good">Glückwunsch! Du hast richtig geraten.</string>
-    <string name="label_date">Datum</string>
+    <string name="label_time">Zeit</string>
     <string name="label_ntries">Versuche</string>
     <string name="label_name">Name</string>
     <string name="newhighscoredialog_title">Glückwunsch!</string>

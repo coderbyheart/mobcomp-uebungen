@@ -151,11 +151,13 @@ public class NummernRatenActivity extends Activity {
 							R.string.label_result_too_low, Toast.LENGTH_SHORT)
 							.show();
 					updateSeeker();
+					seeker.setProgress(userNumber.subtract(game.getMinHint()).intValue());
 				} else if (guess.isTooHigh()) {
 					Toast.makeText(NummernRatenActivity.this,
 							R.string.label_result_too_high, Toast.LENGTH_SHORT)
 							.show();
 					updateSeeker();
+					seeker.setProgress(game.getMaxHint().subtract(BigInteger.ONE).intValue());
 				} else {
 					showDialog(NEW_HIGHSCORE_DIALOG);
 				}
@@ -297,6 +299,7 @@ public class NummernRatenActivity extends Activity {
 					hs = new Highscore();
 					hs.setName(highscoreNameText.getText().toString());
 					hs.setTries(game.getTries());
+					hs.setTime(game.getTime());
 					new Thread(new Runnable() {
 						@Override
 						public void run() {
@@ -365,6 +368,5 @@ public class NummernRatenActivity extends Activity {
 	private void updateSeeker() {
 		// Seeker geht von 0 bis x
 		seeker.setMax(game.getMaxHint().subtract(game.getMinHint()).intValue());
-		seeker.setProgress(userNumber.subtract(game.getMinHint()).intValue());
 	}
 }

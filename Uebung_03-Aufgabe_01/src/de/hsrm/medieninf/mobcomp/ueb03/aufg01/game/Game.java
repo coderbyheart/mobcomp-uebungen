@@ -2,6 +2,7 @@ package de.hsrm.medieninf.mobcomp.ueb03.aufg01.game;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import android.util.Log;
@@ -13,10 +14,13 @@ public class Game {
 	private BigInteger limit;
 	private BigInteger maxHint;
 	private BigInteger minHint;
+	private long start;
+	private long stop;
 
 	public Game(long limit) {
 		this.limit = this.maxHint = BigInteger.valueOf((long) limit);
-		this.minHint = BigInteger.ONE; 
+		this.minHint = BigInteger.ONE;
+		this.start = new Date().getTime();
 		setGuesses(new ArrayList<Guess>());
 		setAskNumber(BigInteger.valueOf((long) (Math.random() * 1000)));
 	}
@@ -46,6 +50,10 @@ public class Game {
 		if (guess.isTooLow()) {
 			minHint = userNumber;
 		}
+		if (guess.isGood()) {
+			this.stop = new Date().getTime();
+			Log.v(this.getClass().getCanonicalName(), "Zeit: " + getTime());
+		}
 		return guess;
 	}
 
@@ -63,5 +71,15 @@ public class Game {
 	
 	public BigInteger getMinHint() {
 		return minHint;
+	}
+	
+	/**
+	 * Gibt die Zeit in Millisekunden zurück
+	 * 
+	 * @return
+	 */
+	public long getTime()
+	{
+		return stop - start;
 	}
 }
