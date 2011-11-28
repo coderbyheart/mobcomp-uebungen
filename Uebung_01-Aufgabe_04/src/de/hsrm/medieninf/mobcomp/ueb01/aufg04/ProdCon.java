@@ -73,16 +73,17 @@ public class ProdCon implements Runnable {
 			}
 		}
 		long end = System.currentTimeMillis();
-		Log.v(PrimSum.TAG, type + ": Fertig.");
 		Log.v(PrimSum.TAG, type + ": Laufzeit war " + (end - start) + " ms.");
-		
-		try {
-			barrier.await();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		} catch (BrokenBarrierException e) {
-			e.printStackTrace();
+		if (isConsumer()) {
+			try {
+				barrier.await();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			} catch (BrokenBarrierException e) {
+				e.printStackTrace();
+			}
 		}
+		Log.v(PrimSum.TAG, type + ": Fertig.");
 	}
 
 	/**
