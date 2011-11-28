@@ -31,8 +31,16 @@ import android.widget.Toast;
 import de.hsrm.medieninf.mobcomp.ueb03.aufg01.entity.Guess;
 import de.hsrm.medieninf.mobcomp.ueb03.aufg01.entity.Highscore;
 import de.hsrm.medieninf.mobcomp.ueb03.aufg01.game.Game;
+import de.hsrm.medieninf.mobcomp.ueb03.aufg01.game.IGame;
 import de.hsrm.medieninf.mobcomp.ueb03.aufg01.persistence.HighscoreDbAdapter;
 
+/**
+ * Verwendet direkt ein Game-Objekt zum speichern des Spielzustandes
+ * 
+ * Für Aufgabe 4 wurde das Verwenden von Runnables eingeführt
+ * 
+ * @author Markus Tacker <m@coderbyheart.de>
+ */
 public class NummernRatenActivity extends Activity {
 	/** Called when the activity is first created. */
 
@@ -50,9 +58,10 @@ public class NummernRatenActivity extends Activity {
 	private Button highscoreOkButton;
 	private Highscore hs;
 	private Handler handler = new Handler();
-	private Game game;
+	protected IGame game;
 	private SeekBar seeker;
 	private int ms = 100;
+	private Guess lastGuess;
 
 	private class MinusListener implements OnTouchListener, OnClickListener,
 			OnLongClickListener {
@@ -63,7 +72,6 @@ public class NummernRatenActivity extends Activity {
 			updater = decreaser;
 		}
 
-		@Override
 		public void onClick(View v) {
 			modify();
 		}
@@ -72,14 +80,12 @@ public class NummernRatenActivity extends Activity {
 			decrease();
 		}
 
-		@Override
 		public boolean onLongClick(View v) {
 			handler.removeCallbacks(updater);
 			handler.postAtTime(updater, SystemClock.uptimeMillis() + getMs());
 			return true;
 		}
 
-		@Override
 		public boolean onTouch(View view, MotionEvent motionevent) {
 			int action = motionevent.getAction();
 			if (action == MotionEvent.ACTION_DOWN) {
@@ -141,40 +147,48 @@ public class NummernRatenActivity extends Activity {
 		plus.setOnLongClickListener(pl);
 		plus.setLongClickable(true);
 
+		// Einen neuen Versuch machen
 		ok.setOnClickListener(new OnClickListener() {
-			@Override
 			public void onClick(View v) {
 				readUserNumber();
-				Guess guess = game.createGuess(userNumber);
-				if (guess.isTooLow()) {
-					Toast.makeText(NummernRatenActivity.this,
-							R.string.label_result_too_low, Toast.LENGTH_SHORT)
-							.show();
-					updateSeeker();
-				} else if (guess.isTooHigh()) {
-					Toast.makeText(NummernRatenActivity.this,
-							R.string.label_result_too_high, Toast.LENGTH_SHORT)
-							.show();
-					updateSeeker();
-				} else {
-					showDialog(NEW_HIGHSCORE_DIALOG);
-				}
-				updateGuessView(guess);
+				game.createGuess(userNumber, new ParameterRunnable<Guess>() {
+					public void run() {
+						int lastGuessNumberOfTry = lastGuess == null ? 0 : lastGuess.getNumberOfTry(); 
+						if (lastGuessNumberOfTry + 1 != parameter.getNumberOfTry()) {
+							// Strafe!
+							Toast.makeText(NummernRatenActivity.this,
+									R.string.label_result_time_penalty, Toast.LENGTH_SHORT)
+									.show();
+						}
+						lastGuess = parameter;
+						if (parameter.isTooLow()) {
+							Toast.makeText(NummernRatenActivity.this,
+									R.string.label_result_too_low, Toast.LENGTH_SHORT)
+									.show();
+							updateSeeker();
+						} else if (parameter.isTooHigh()) {
+							Toast.makeText(NummernRatenActivity.this,
+									R.string.label_result_too_high, Toast.LENGTH_SHORT)
+									.show();
+							updateSeeker();
+						} else {
+							showDialog(NEW_HIGHSCORE_DIALOG);
+						}
+						updateGuessView(parameter);
+					}
+				});
 			}
 		});
 
 		seeker.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 
-			@Override
 			public void onStopTrackingTouch(SeekBar seekBar) {
 				setUserNumber(game.getMinHint().add(BigInteger.valueOf(seekBar.getProgress())));
 			}
 
-			@Override
 			public void onStartTrackingTouch(SeekBar seekBar) {
 			}
 
-			@Override
 			public void onProgressChanged(SeekBar seekBar, int progress,
 					boolean fromUser) {
 				setUserNumber(game.getMinHint().add(BigInteger.valueOf(progress)));
@@ -183,17 +197,15 @@ public class NummernRatenActivity extends Activity {
 		
 		number.addTextChangedListener(new TextWatcher() {
 			
-			@Override
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
 			}
 			
-			@Override
 			public void beforeTextChanged(CharSequence s, int start, int count,
 					int after) {
 			}
 			
-			@Override
 			public void afterTextChanged(Editable s) {
+				if (game == null) return;
 				seeker.setProgress(Integer.valueOf(s.toString()) - game.getMinHint().intValue());
 			}
 		});
@@ -254,7 +266,7 @@ public class NummernRatenActivity extends Activity {
 			cicon.setImageDrawable(getResources().getDrawable(R.drawable.down));
 		}
 
-		cntry.setText(String.valueOf(game.getTries()));
+		cntry.setText(String.valueOf(guess.getNumberOfTry()));
 		cguess.setText(guess.getNumber().toString());
 
 		table.addView(logtableRow, 1);
@@ -275,31 +287,26 @@ public class NummernRatenActivity extends Activity {
 			highscoreNameText = (EditText) highscoreEnterDialog
 					.findViewById(R.id.name_text);
 			highscoreNameText.addTextChangedListener(new TextWatcher() {
-				@Override
 				public void onTextChanged(CharSequence s, int start,
 						int before, int count) {
 				}
 
-				@Override
 				public void beforeTextChanged(CharSequence s, int start,
 						int count, int after) {
 				}
 
-				@Override
 				public void afterTextChanged(Editable s) {
 					highscoreOkButton.setEnabled(s.length() > 0);
 				}
 			});
 
 			highscoreOkButton.setOnClickListener(new OnClickListener() {
-				@Override
 				public void onClick(View v) {
 					hs = new Highscore();
 					hs.setName(highscoreNameText.getText().toString());
-					hs.setTries(game.getTries());
-					hs.setTime(game.getTime());
+					hs.setTries(lastGuess.getNumberOfTry());
+					hs.setTime(lastGuess.getTime());
 					new Thread(new Runnable() {
-						@Override
 						public void run() {
 							HighscoreDbAdapter dba = new HighscoreDbAdapter(
 									NummernRatenActivity.this).open();
@@ -315,7 +322,6 @@ public class NummernRatenActivity extends Activity {
 
 			((Button) highscoreEnterDialog.findViewById(R.id.abort_button))
 					.setOnClickListener(new OnClickListener() {
-						@Override
 						public void onClick(View v) {
 							highscoreEnterDialog.cancel();
 						}
@@ -356,8 +362,12 @@ public class NummernRatenActivity extends Activity {
 		startActivity(intent);
 	}
 
-	private void reset() {
+	protected void reset() {
 		game = new Game(1000);
+		resetLayout();
+	}
+
+	protected void resetLayout() {
 		table.removeViews(1, table.getChildCount() - 1);
 		setUserNumber(BigInteger.valueOf(500));
 		updateSeeker();
@@ -368,5 +378,17 @@ public class NummernRatenActivity extends Activity {
 		seeker.setMax(game.getMaxHint().subtract(game.getMinHint()).intValue());
 		// Funktioniert komischerweise nur, wenn der Wert zu klein war 
 		seeker.setProgress(userNumber.subtract(game.getMinHint()).intValue());
+	}
+	
+	public void onPause()
+	{
+		super.onPause();
+		if (game != null) game.pause();
+	}
+	
+	public void onResume()
+	{
+		super.onResume();
+		if (game != null) game.resume();
 	}
 }

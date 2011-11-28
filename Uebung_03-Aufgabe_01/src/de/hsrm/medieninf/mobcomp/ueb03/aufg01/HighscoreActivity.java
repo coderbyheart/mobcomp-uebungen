@@ -12,6 +12,11 @@ import android.widget.TextView;
 import de.hsrm.medieninf.mobcomp.ueb03.aufg01.entity.Highscore;
 import de.hsrm.medieninf.mobcomp.ueb03.aufg01.persistence.HighscoreDbAdapter;
 
+/**
+ * Zeigt die Highscore an, diese ist sortierbar
+ * 
+ * @author Markus Tacker <m@coderbyheart.de>
+ */
 public class HighscoreActivity extends Activity {
 
 	private TableLayout table;
@@ -35,7 +40,6 @@ public class HighscoreActivity extends Activity {
 		sortTimeCell.setClickable(true);
 		
 		sortTriesCell.setOnClickListener(new OnClickListener() {
-			@Override
 			public void onClick(View v) {
 				setSort(HighscoreDbAdapter.KEY_TRIES);
 				sortTriesCell.findViewById(R.id.tablerow_sort_tries_icon).setVisibility(View.VISIBLE);
@@ -44,7 +48,6 @@ public class HighscoreActivity extends Activity {
 		});
 		
 		sortTimeCell.setOnClickListener(new OnClickListener() {
-			@Override
 			public void onClick(View v) {
 				setSort(HighscoreDbAdapter.KEY_TIME);
 				sortTimeCell.findViewById(R.id.tablerow_sort_time_icon).setVisibility(View.VISIBLE);

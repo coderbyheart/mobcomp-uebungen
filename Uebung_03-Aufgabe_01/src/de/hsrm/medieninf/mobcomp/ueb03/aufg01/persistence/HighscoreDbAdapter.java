@@ -10,12 +10,14 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 import de.hsrm.medieninf.mobcomp.ueb03.aufg01.entity.Highscore;
 
+/**
+ * Adapter für die Highscore-Datenbank
+ * 
+ * @author Markus Tacker <m@coderbyheart.de>
+ */
 public class HighscoreDbAdapter {
-	private static final String TAG = "HighscoreDbAdapter";
-
 	private static final String DB_FILENAME = "db.db";
 	private static final int DB_VERSION = 2;
 	private static final String TABLE = "highscore";
@@ -47,26 +49,18 @@ public class HighscoreDbAdapter {
 
 	public HighscoreDbAdapter open() throws SQLException {
 		if (db == null) {
-			Log.v(TAG, "Öffne Datenbank...");
 			try {
 				db = dbHelper.getWritableDatabase();
-				Log.v(TAG, "Datenbank zum Schreiben geöffnet.");
 			} catch (SQLException e) {
 				db = dbHelper.getReadableDatabase();
-				Log.v(TAG, "Datenbank zum Lesen geöffnet.");
 			}
-		} else {
-			Log.v(TAG, "Datenbank bereits geöffnet.");
 		}
 		return this;
 	}
 
 	public HighscoreDbAdapter close() {
 		if (db != null) {
-			Log.v(TAG, "Schließe Datenbank.");
 			db.close();
-		} else {
-			Log.v(TAG, "Datenbank bereits geschlossen.");
 		}
 		db = null;
 		return this;
@@ -110,7 +104,6 @@ public class HighscoreDbAdapter {
 				KEY_ID + "=" + highscoreId, null, null, null, null);
 		result.moveToFirst();
 		if (result.isAfterLast()) {
-			Log.v(TAG, "Highscore #" + highscoreId + " nicht gefunden.");
 			return null;
 		}
 		Highscore hs = new Highscore();
@@ -129,7 +122,6 @@ public class HighscoreDbAdapter {
 				null, sort + " ASC");
 		result.moveToFirst();
 		if (result.isAfterLast()) {
-			Log.v(TAG, "Keine Highscore gefunden.");
 			return highscores;
 		}
 		do {
