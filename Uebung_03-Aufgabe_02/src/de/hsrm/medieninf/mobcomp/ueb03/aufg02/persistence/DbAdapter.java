@@ -7,10 +7,12 @@ import java.util.List;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.MatrixCursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
+import de.hsrm.medieninf.mobcomp.ueb03.aufg02.R;
 import de.hsrm.medieninf.mobcomp.ueb03.aufg02.entity.Entity;
 import de.hsrm.medieninf.mobcomp.ueb03.aufg02.entity.Sheet;
 import de.hsrm.medieninf.mobcomp.ueb03.aufg02.entity.Word;
@@ -20,6 +22,7 @@ public class DbAdapter {
 	private static final int DB_VERSION = 1;
 	private SQLiteDatabase db;
 	private DBHelper dbHelper;
+	private Context context;
 	
 	// Tabelle für Blätter
 	private static final String SHEET_TABLE = "sheet";
@@ -59,6 +62,10 @@ public class DbAdapter {
 		+ ", " + WORD_KEY_CREATION_TIME + " STRING NOT NULL"
 		+ ")";
 	
+	// Felder für Info
+	public static final int INFO_COL_NUMWORDS = 0;
+	public static final String INFO_KEY_NUMWORDS = "numWords";
+	
 	private static class DBHelper extends SQLiteOpenHelper {
 
 		public DBHelper(Context context, String name,
@@ -82,6 +89,7 @@ public class DbAdapter {
 	}
 
 	public DbAdapter(Context context) {
+		this.context = context;
 		dbHelper = new DBHelper(context, DB_FILENAME, null,
 				DB_VERSION);
 	}
@@ -143,11 +151,13 @@ public class DbAdapter {
 		if (result.isAfterLast()) {
 			return null;
 		}
-		Entity sheet = getSheet(result
-				.getInt(WORD_COL_SHEET));
 		Word item = new Word();
 		item.setId(id);
-		item.setSheet(sheet);
+		item.setSheetId(result
+				.getInt(WORD_COL_SHEET));
+		item.setCreationTime(result.getString(WORD_COL_CREATION_TIME));
+		item.setHeardTime(result.getString(WORD_COL_HEARD_TIME));
+		item.setWord(result.getString(WORD_COL_WORD));
 		return item;
 	}
 	
@@ -158,6 +168,22 @@ public class DbAdapter {
 	public Cursor getSheetsCursor(String[] cols) {
 		Cursor result = getDb()
 				.query(SHEET_TABLE, cols, null, null, null, null, null);
+		result.moveToFirst();
+		if (result.isAfterLast()) {
+			return null;
+		}
+		return result;
+	}
+
+	/**
+	 * Liefert einen Cursor zu den Worten eines Blattes
+	 * 
+	 * @param id
+	 * @return
+	 */
+	public Cursor getSheetWordsCursor(int id) {
+		Cursor result = getDb()
+				.query(WORD_TABLE, new String[] { WORD_KEY_ID, WORD_KEY_SHEET, WORD_KEY_WORD, WORD_KEY_HEARD_TIME, WORD_KEY_CREATION_TIME }, WORD_KEY_SHEET + "=" + id, null, null, null, null);
 		result.moveToFirst();
 		if (result.isAfterLast()) {
 			return null;
@@ -179,21 +205,31 @@ public class DbAdapter {
 	public Sheet persist(Sheet item) {
 		ContentValues itemValues = new ContentValues();
 		itemValues.put(SHEET_KEY_NWORDS, item.getNumberOfWords());
-		itemValues.put(SHEET_KEY_CREATION_TIME, new Date().toGMTString());
+		if (item.getId() > 0) {
+			itemValues.put(SHEET_KEY_ID, item.getId());
+			itemValues.put(SHEET_KEY_CREATION_TIME, item.getCreationTime());
+		} else {
+			itemValues.put(SHEET_KEY_CREATION_TIME, new Date().toGMTString());	
+		}
 		return (Sheet) persist(item, itemValues, SHEET_TABLE, SHEET_KEY_ID);
 	}
 	
 	public Word persist(Word item) {
 		ContentValues itemValues = new ContentValues();
-		itemValues.put(WORD_KEY_SHEET, item.getSheet().getId());
+		itemValues.put(WORD_KEY_SHEET, item.getSheetId());
 		itemValues.put(WORD_KEY_WORD, item.getWord());
-		itemValues.put(WORD_KEY_CREATION_TIME, new Date().toGMTString());
+		itemValues.put(WORD_KEY_HEARD_TIME, item.getHeardTime());
+		if (item.getId() > 0) {
+			itemValues.put(WORD_KEY_ID, item.getId());
+			itemValues.put(WORD_KEY_CREATION_TIME, item.getCreationTime());
+		} else {
+			itemValues.put(WORD_KEY_CREATION_TIME, new Date().toGMTString());
+		}
 		return (Word) persist(item, itemValues, WORD_TABLE, WORD_KEY_ID);
 	}
 	
 	private Entity persist(Entity item, ContentValues itemValues, String table, String idKey) {
 		if (item.getId() > 0) {
-			itemValues.put(SHEET_KEY_ID, item.getId());
 			db.update(table, itemValues, idKey + "=" + item.getId(), null);
 		} else {
 			int id = (int) db.insert(table, null, itemValues);
@@ -211,5 +247,19 @@ public class DbAdapter {
 	public void remove(Word item) {
 		db.delete(WORD_TABLE, WORD_KEY_ID
 				+ "=" + item.getId(), null);
+	}
+
+	/**
+	 * Liefert allgemeine Infos zum Spiel
+	 * - z.B. die maximal Anzahl von Worten
+	 * @return Cursor
+	 */
+	public Cursor getInfoCursor() {
+		MatrixCursor infoCursor = new MatrixCursor(new String[]{ INFO_KEY_NUMWORDS }, 1);
+		ArrayList<Integer> infoValues = new ArrayList<Integer>();
+		infoValues.add(context.getResources()
+				.getStringArray(R.array.bullshit).length);
+		infoCursor.addRow(infoValues);
+		return infoCursor;
 	}
 }

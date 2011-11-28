@@ -2,6 +2,7 @@ package de.hsrm.medieninf.mobcomp.ueb03.aufg02.entity;
 
 public class Word extends Entity {
 	private Entity sheet;
+	private Integer sheetId;
 	private String word;
 	private String heardTime;
 
@@ -11,6 +12,7 @@ public class Word extends Entity {
 
 	public void setSheet(Entity sheet) {
 		this.sheet = sheet;
+		sheetId = sheet.getId();
 	}
 
 	public String getWord() {
@@ -27,5 +29,13 @@ public class Word extends Entity {
 
 	public void setHeardTime(String heardTime) {
 		this.heardTime = heardTime;
+	}
+
+	public Integer getSheetId() {
+		return sheetId;
+	}
+
+	public void setSheetId(Integer sheetId) {
+		this.sheetId = sheetId;
 	}
 }

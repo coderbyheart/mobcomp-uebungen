@@ -6,6 +6,6 @@
     android:gravity="center"
     android:textAppearance="?android:attr/textAppearanceMedium"
     android:layout_margin="1dp"
-    android:background="@android:color/background_dark"
     android:layout_weight="1"
+    android:background="@android:color/background_dark"
     />

@@ -1,5 +1,6 @@
 package de.hsrm.medieninf.mobcomp.ueb03.aufg02.persistence;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import android.content.ContentProvider;
@@ -20,6 +21,7 @@ public class Provider extends ContentProvider {
 	private static final int SHEET_ITEM = 2;
 	private static final int SHEET_WORDS = 3;
 	private static final int WORD_ITEM = 4;
+	private static final int INFO_LIST = 5;
 	private static final UriMatcher uriMatcher; 
 	private DbAdapter dbc;
 	static {
@@ -28,11 +30,13 @@ public class Provider extends ContentProvider {
 		uriMatcher.addURI(AUTHORITY, "sheet/#", SHEET_ITEM);
 		uriMatcher.addURI(AUTHORITY, "sheet/#/word", SHEET_WORDS);
 		uriMatcher.addURI(AUTHORITY, "word/#", WORD_ITEM);
+		uriMatcher.addURI(AUTHORITY, "info", INFO_LIST);
 	}
 	private static final String VND_SHEET_ITEM = "vnd.android.cursor.item/vnd.de.hsrm.medieninf.mobcomp.ueb03.aufg02.sheet";
 	private static final String VND_SHEET_DIR = "vnd.android.cursor.dir/vnc.de.hsrm.medieninf.mobcomp.ueb03.aufg02.sheet";
 	private static final String VND_WORD_ITEM = "vnd.android.cursor.item/vnd.de.hsrm.medieninf.mobcomp.ueb03.aufg02.word";
 	private static final String VND_WORD_DIR = "vnd.android.cursor.dir/vnc.de.hsrm.medieninf.mobcomp.ueb03.aufg02.word";
+	private static final String VND_INFO_ITEM = "vnd.android.cursor.item/vnc.de.hsrm.medieninf.mobcomp.ueb03.aufg02.info";
 
 	/**
 	 * Wird beim Erzeugen aufgerufen
@@ -68,6 +72,10 @@ public class Provider extends ContentProvider {
 			return VND_SHEET_ITEM;
 		case WORD_ITEM:
 			return VND_WORD_ITEM;
+		case SHEET_WORDS:
+			return VND_WORD_DIR;
+		case INFO_LIST:
+			return VND_INFO_ITEM;
 		default:
 			throw new IllegalArgumentException("Unsupported URI: " + uri);
 		}
@@ -86,17 +94,22 @@ public class Provider extends ContentProvider {
 
 			Sheet bss = new Sheet();
 			int nWords = cv.getAsInteger(DbAdapter.SHEET_KEY_NWORDS);
+			if (nWords > bullshitWords.length) return null;
+			
 			String now = new Date().toGMTString();
 			bss.setNumberOfWords(nWords);
 			bss.setCreationTime(now);
 			dbc.persist(bss);
 
+			ArrayList<Integer> usedWords = new ArrayList<Integer>();
 			for (int i = 0; i < nWords; i++) {
 				Word bsw = new Word();
 				bsw.setCreationTime(now);
 				bsw.setSheet(bss);
-				int randKey = Double.valueOf(
-						Math.random() * bullshitWords.length).intValue();
+				Integer randKey;
+				do {
+					randKey = Double.valueOf(Math.random() * bullshitWords.length).intValue();
+				} while(usedWords.contains(randKey));
 				bsw.setWord(bullshitWords[randKey]);
 				dbc.persist(bsw);
 			}
@@ -116,6 +129,10 @@ public class Provider extends ContentProvider {
 			return dbc.getSheetCursor(Integer.parseInt(uri.getPathSegments().get(1)));
 		case SHEET_LIST:
 			return dbc.getSheetsCursor();
+		case SHEET_WORDS:
+			return dbc.getSheetWordsCursor(Integer.parseInt(uri.getPathSegments().get(1)));
+		case INFO_LIST:
+			return dbc.getInfoCursor();
 		default:
 			return null;
 		}
@@ -131,7 +148,7 @@ public class Provider extends ContentProvider {
 			String[] selectionArgs) {
 		switch (uriMatcher.match(uri)) {
 		case WORD_ITEM:
-			Word bsw = dbc.getWord(Integer.parseInt(uri.getFragment()));
+			Word bsw = dbc.getWord(Integer.parseInt(uri.getPathSegments().get(1)));
 			bsw.setHeardTime(new Date().toGMTString());
 			dbc.persist(bsw);
 			return 1;
