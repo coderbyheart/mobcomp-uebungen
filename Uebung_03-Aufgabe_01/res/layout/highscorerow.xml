@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TableRow 
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent" 
+	android:layout_height="wrap_content"
+	android:orientation="vertical" 
+	android:id="@+id/highscorerow_root"
+	>
+	<TextView
+		android:layout_height="wrap_content" 				
+		android:layout_width="wrap_content"
+		android:layout_weight="1"
+		android:padding="2dp"
+		android:id="@+id/highscore_ntries_textview"
+		/>
+	<TextView 
+		android:layout_height="wrap_content"
+		android:layout_width="wrap_content"
+		android:layout_weight="2"
+		android:padding="2dp"
+		android:id="@+id/highscore_date_textview"
+		/>
+	<TextView 
+		android:layout_height="wrap_content"
+		android:layout_width="wrap_content"
+		android:layout_weight="8"
+		android:padding="2dp"
+		android:id="@+id/highscore_name_textview"
+		/>
+</TableRow>
+

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:orientation="vertical"
+  android:layout_width="fill_parent"
+  android:layout_height="fill_parent"
+  android:id="@+id/newhighscoredialog"
+  >
+  	<TextView
+  		android:layout_width="fill_parent" 
+    	android:layout_height="wrap_content"
+    	android:padding="10dp"
+    	android:text="@string/newhighscoredialog_text"
+    	/>
+    <EditText 
+    	android:layout_width="fill_parent" 
+    	android:layout_height="wrap_content"
+    	android:id="@+id/name_text" 
+    	>
+        <requestFocus></requestFocus>
+    </EditText>
+	<LinearLayout
+	  android:orientation="horizontal"
+	  android:layout_width="fill_parent"
+	  android:layout_height="wrap_content"
+	  >
+	   	<Button 
+	    	android:layout_width="fill_parent" 
+	    	android:text="@string/button_cancel" 
+	    	android:layout_height="wrap_content"
+	    	android:layout_weight="1"
+	    	android:id="@+id/abort_button"
+	    	android:drawableLeft="@android:drawable/ic_menu_close_clear_cancel"
+	    	/>
+	    <Button 
+	    	android:layout_width="fill_parent" 
+	    	android:text="@string/button_ok" 
+	    	android:layout_height="wrap_content"
+	    	android:layout_weight="1"
+	    	android:id="@+id/ok_button"
+	    	android:drawableLeft="@android:drawable/ic_menu_add"
+	    	/>
+   	</LinearLayout>
+</LinearLayout>
