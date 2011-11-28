@@ -70,7 +70,7 @@ public class CurrencySelectActivity extends DbActivity {
 	@Override
 	public void onResume() {
 		super.onResume();
-		currencyList = dba.getCurrencies();
+		currencyList = dba.getCurrenciesCursor();
 		startManagingCursor(currencyList);
 
 		SimpleCursorAdapter adapter = new SimpleCursorAdapter(this,
