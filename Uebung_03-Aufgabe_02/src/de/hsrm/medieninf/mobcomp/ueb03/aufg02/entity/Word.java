@@ -1,5 +1,10 @@
 package de.hsrm.medieninf.mobcomp.ueb03.aufg02.entity;
 
+/**
+ * Ein Wort eines Spielblattes
+ * 
+ * @author Markus Tacker <m@coderbyheart.de>
+ */
 public class Word extends Entity {
 	private Entity sheet;
 	private Integer sheetId;

@@ -1,5 +1,10 @@
 package de.hsrm.medieninf.mobcomp.ueb03.aufg02.entity;
 
+/**
+ * Basisklasse für die Entities
+ * 
+ * @author Markus Tacker <m@coderbyheart.de>
+ */
 public abstract class Entity {
 
 	private int id;
