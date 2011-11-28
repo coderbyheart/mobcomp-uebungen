@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Dialoge</string>
+    <string name="warning_button_text">Warnung</string>
+    <string name="select_button_text">Einfachauswahl</string>
+    <string name="time_button_text">Zeitauswahl</string>
+    <string name="exit_button_text">Beenden</string>
+    <string name="warning_title">Warnung mit drei Buttons</string>
+    <string name="warning_text">Text zur Warnung</string>
+    <string name="warning_button_positive_text">Ok</string>
+    <string name="warning_button_neutral_text">Weiß nicht</string>
+    <string name="warning_button_negative_text">Nein</string>
+    <string name="status_button_clicked_text">Button &lt;b>%1$s&lt;/b> angeklickt.</string>
+    <string-array name="directions">
+    	<item>Norden</item>
+    	<item>Süden</item>
+    	<item>Westen</item>
+    	<item>Osten</item>
+    </string-array>
+    <string name="status_direction_selected_text">Himmelsrichtung &lt;b>%1$s&lt;/b> ausgewählt.</string>
+    <string name="status_time_selected_text">Uhrzeit &lt;b>%1$d:%2$d&lt;/b> ausgewählt.</string>
+</resources>
