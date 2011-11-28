@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import de.hsrm.medieninf.mobcomp.ueb03.aufg01.entity.Highscore;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;

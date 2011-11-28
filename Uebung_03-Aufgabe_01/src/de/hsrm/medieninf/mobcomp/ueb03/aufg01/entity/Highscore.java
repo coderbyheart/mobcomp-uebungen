@@ -1,4 +1,4 @@
-package de.hsrm.medieninf.mobcomp.ueb03.aufg01.persistence;
+package de.hsrm.medieninf.mobcomp.ueb03.aufg01.entity;
 
 public class Highscore {
 	private int id;

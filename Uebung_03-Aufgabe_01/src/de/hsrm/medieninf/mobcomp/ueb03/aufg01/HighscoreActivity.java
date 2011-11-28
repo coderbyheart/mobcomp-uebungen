@@ -6,7 +6,7 @@ import android.view.LayoutInflater;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-import de.hsrm.medieninf.mobcomp.ueb03.aufg01.persistence.Highscore;
+import de.hsrm.medieninf.mobcomp.ueb03.aufg01.entity.Highscore;
 import de.hsrm.medieninf.mobcomp.ueb03.aufg01.persistence.HighscoreDbAdapter;
 
 public class HighscoreActivity extends Activity {
