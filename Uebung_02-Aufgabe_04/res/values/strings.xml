@@ -5,6 +5,14 @@
     <string name="conc_usd">US-Dollar</string>
     <string name="conc_grd">Drachme</string>
     <string name="currency_select_dialog_title">Währung auswählen ...</string>
+    <string name="currency_add">Währung hinzufügen</string>
+    <string name="ok">OK</string>
+    <string name="done">Fertig</string>
+    <string name="abort">Abbrechen</string>
     <string name="menu_config_currencies">Währungen konfigurieren</string>
     <string name="menu_quit">Beenden</string>
+    <string name="label_name">Name</string>
+    <string name="label_symbol">Symbol</string>
+    <string name="label_rate">Kurs</string>
+    <string name="menu_delete">Löschen</string>
 </resources>

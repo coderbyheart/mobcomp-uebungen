@@ -13,21 +13,21 @@ public class Rechner {
 		ctx = context;
 	}
 
-	public List<Waehrung> getDefaultCurrencies() {
+	public List<Currency> getDefaultCurrencies() {
 
-		ArrayList<Waehrung> waehrungen = new ArrayList<Waehrung>();
-		Waehrung euro = new Waehrung()
+		ArrayList<Currency> waehrungen = new ArrayList<Currency>();
+		Currency euro = new Currency()
 				.setSymbol("€")
 				.setName(
 						(String) ctx.getResources()
 								.getString(R.string.conc_eur)).setRate(1.0);
-		Waehrung usd = new Waehrung()
+		Currency usd = new Currency()
 				.setSymbol("$")
 				.setName(
 						(String) ctx.getResources()
 								.getString(R.string.conc_usd))
 				.setRate(0.7183392);
-		Waehrung grd = new Waehrung()
+		Currency grd = new Currency()
 				.setSymbol("₯")
 				.setName(
 						(String) ctx.getResources()

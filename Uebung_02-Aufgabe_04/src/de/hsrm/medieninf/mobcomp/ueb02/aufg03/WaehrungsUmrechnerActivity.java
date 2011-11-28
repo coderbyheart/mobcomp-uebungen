@@ -26,17 +26,17 @@ public class WaehrungsUmrechnerActivity extends Activity {
 	public static final String TAG = "WaehrungsUmrechnerActivity";
 	public static final int DIALOG_CURRENCY = 1;
 
-	private Waehrung waehrungA, waehrungB;
+	private Currency waehrungA, waehrungB;
 	private EditText valueA, valueB;
 	private Button buttonA, buttonB;
 	private InputWatcher watcherA, watcherB;
 	private CurrencyField fieldA, fieldB;
-	private Map<Integer, Waehrung> waehrungen = new HashMap<Integer, Waehrung>();
+	private Map<Integer, Currency> waehrungen = new HashMap<Integer, Currency>();
 	private Button clickedButton;
 
 	private class CurrencyField {
 		private EditText field;
-		private Waehrung currency;
+		private Currency currency;
 		private String name;
 
 		public CurrencyField(String name, EditText field) {
@@ -52,11 +52,11 @@ public class WaehrungsUmrechnerActivity extends Activity {
 			this.field = field;
 		}
 
-		public Waehrung getCurrency() {
+		public Currency getCurrency() {
 			return currency;
 		}
 
-		public void setCurrency(Waehrung currency) {
+		public void setCurrency(Currency currency) {
 			this.currency = currency;
 		}
 
@@ -129,7 +129,7 @@ public class WaehrungsUmrechnerActivity extends Activity {
 		setContentView(R.layout.main);
 		
 		Rechner rechner = new Rechner(this);
-		List<Waehrung> defaultWaehrungen = rechner.getDefaultCurrencies();
+		List<Currency> defaultWaehrungen = rechner.getDefaultCurrencies();
 		
 		waehrungen.put(0, defaultWaehrungen.get(0));
 		waehrungen.put(1, defaultWaehrungen.get(1));
@@ -155,21 +155,21 @@ public class WaehrungsUmrechnerActivity extends Activity {
 		setWaehrungB(defaultWaehrungen.get(1));
 	}
 
-	public Waehrung getWaehrungA() {
+	public Currency getWaehrungA() {
 		return waehrungA;
 	}
 
-	public void setWaehrungA(Waehrung waehrungA) {
+	public void setWaehrungA(Currency waehrungA) {
 		this.waehrungA = waehrungA;
 		buttonA.setText(getWaehrungA().getSymbol());
 		fieldA.setCurrency(this.waehrungA);
 	}
 
-	public Waehrung getWaehrungB() {
+	public Currency getWaehrungB() {
 		return waehrungB;
 	}
 
-	public void setWaehrungB(Waehrung waehrungB) {
+	public void setWaehrungB(Currency waehrungB) {
 		this.waehrungB = waehrungB;
 		buttonB.setText(getWaehrungB().getSymbol());
 		fieldB.setCurrency(this.waehrungB);
@@ -180,7 +180,7 @@ public class WaehrungsUmrechnerActivity extends Activity {
 		switch (id) {
 		case DIALOG_CURRENCY:
 			ArrayList<CharSequence> waehrungenNames = new ArrayList<CharSequence>();
-			for (Waehrung w : waehrungen.values()) {
+			for (Currency w : waehrungen.values()) {
 				waehrungenNames.add(w.getName());
 			}
 
@@ -224,7 +224,7 @@ public class WaehrungsUmrechnerActivity extends Activity {
 		switch (item.getItemId()) {
 		case R.id.menu_config_currencies:
 			startActivity(new Intent(WaehrungsUmrechnerActivity.this,
-					CurrencyConfigActivity.class));
+					CurrencySelectActivity.class));
 			return true;
 		case R.id.menu_quit:
 			finish();

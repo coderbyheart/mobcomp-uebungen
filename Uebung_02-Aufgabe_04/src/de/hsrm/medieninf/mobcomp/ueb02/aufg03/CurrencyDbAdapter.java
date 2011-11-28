@@ -7,8 +7,10 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 public class CurrencyDbAdapter {
+	private static final String TAG = "CurrencyDbAdapter";
 
 	private static final String DB_FILENAME = "currencies.db";
 	private static final int DB_VERSION = 1;
@@ -24,7 +26,6 @@ public class CurrencyDbAdapter {
 	public static final String CURRENCY_KEY_NAME = "name";
 
 	private SQLiteDatabase db;
-	private final Context context;
 	private CurrencyDBHelper dbHelper;
 
 	// SQL Anweisungen um DB zu erstellen.
@@ -35,20 +36,46 @@ public class CurrencyDbAdapter {
 			+ ", " + CURRENCY_KEY_NAME + " TEXT NOT NULL" + ")";
 
 	public CurrencyDbAdapter(Context context) {
-		this.context = context;
 		dbHelper = new CurrencyDBHelper(context, DB_FILENAME, null, DB_VERSION);
 	}
 
-	public void open() throws SQLException {
-		try {
-			db = dbHelper.getWritableDatabase();
-		} catch (SQLException e) {
-			db = dbHelper.getReadableDatabase();
+	public CurrencyDbAdapter open() throws SQLException {
+		if (db == null) {
+			Log.v(TAG, "Öffne Datenbank...");
+			try {
+				db = dbHelper.getWritableDatabase();
+				Log.v(TAG, "Datenbank zum Schreiben geöffnet.");
+			} catch (SQLException e) {
+				db = dbHelper.getReadableDatabase();
+				Log.v(TAG, "Datenbank zum Lesen geöffnet.");
+			}
+		} else {
+			Log.v(TAG, "Datenbank bereits geöffnet.");
 		}
+		return this;
 	}
 
-	public void close() {
-		db.close();
+	public CurrencyDbAdapter close() {
+		if (db != null) {
+			Log.v(TAG, "Schließe Datenbank.");
+			db.close();
+		} else {
+			Log.v(TAG, "Datenbank bereits geschlossen.");
+		}
+		db = null;
+		return this;
+	}
+
+	protected SQLiteDatabase getDb() {
+		open();
+		return db;
+	}
+
+	public Cursor getCurrencies() {
+		String[] cols = new String[] { CURRENCY_KEY_ID, CURRENCY_KEY_SYMBOL,
+				CURRENCY_KEY_RATE, CURRENCY_KEY_NAME };
+		return getDb()
+				.query(CURRENCY_TABLE, cols, null, null, null, null, null);
 	}
 
 	private static class CurrencyDBHelper extends SQLiteOpenHelper {
@@ -65,7 +92,7 @@ public class CurrencyDbAdapter {
 			db.execSQL(CURRENCY_SQL_CREATE);
 
 			Rechner rechner = new Rechner(ctx);
-			for (Waehrung waehrung : rechner.getDefaultCurrencies()) {
+			for (Currency waehrung : rechner.getDefaultCurrencies()) {
 				ContentValues currencyValues = new ContentValues();
 				currencyValues.put(CURRENCY_KEY_NAME, waehrung.getName());
 				currencyValues.put(CURRENCY_KEY_RATE, waehrung.getRate());
@@ -83,10 +110,41 @@ public class CurrencyDbAdapter {
 
 	}
 
-	public Cursor getCurrencies() {
+	public Currency getCurrency(int currencyId) {
 		String[] cols = new String[] { CURRENCY_KEY_ID, CURRENCY_KEY_SYMBOL,
 				CURRENCY_KEY_RATE, CURRENCY_KEY_NAME };
-		return db.query(CURRENCY_TABLE, cols, null, null, null, null, null);
+		Cursor result = getDb().query(CURRENCY_TABLE, cols,
+				CURRENCY_KEY_ID + "=" + currencyId, null, null, null, null);
+		result.moveToFirst();
+		if (result.isAfterLast()) {
+			Log.v(TAG, "Währung #" + currencyId + " nicht gefunden.");
+			return null;
+		}
+		Currency waehrung = new Currency();
+		waehrung.setId(currencyId);
+		waehrung.setName(result.getString(CURRENCY_COL_NAME));
+		waehrung.setRate(result.getDouble(CURRENCY_COL_RATE));
+		waehrung.setSymbol(result.getString(CURRENCY_COL_SYMBOL));
+		return waehrung;
 	}
 
+	public Currency persist(Currency c) {
+		ContentValues cValues = new ContentValues();
+		cValues.put(CURRENCY_KEY_NAME, c.getName());
+		cValues.put(CURRENCY_KEY_SYMBOL, c.getSymbol());
+		cValues.put(CURRENCY_KEY_RATE, c.getRate());
+		if (c.getId() > 0) {
+			cValues.put(CURRENCY_KEY_ID, c.getId());
+			db.update(CURRENCY_TABLE, cValues,
+					CURRENCY_KEY_ID + "=" + c.getId(), null);
+		} else {
+			int id = (int) db.insert(CURRENCY_TABLE, null, cValues);
+			c.setId(id);
+		}
+		return c;
+	}
+
+	public void remove(Currency currency) {
+		db.delete(CURRENCY_TABLE, CURRENCY_KEY_ID + "=" + currency.getId(), null);
+	}
 }
