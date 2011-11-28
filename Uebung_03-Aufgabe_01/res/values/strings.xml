@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Nummern raten</string>
+    <string name="app_name_service">Nummern raten (mit Service)</string>
     <string name="app_name_highscore">Nummern raten: Highscore</string>
     <string name="label_select">Bitte wähle eine Nummer zwischen 1 und 1000:</string>
     <string name="button_minus">-</string>
@@ -20,4 +21,5 @@
     <string name="newhighscoredialog_title">Glückwunsch!</string>
     <string name="newhighscoredialog_text">Du hast richtig geraten. Du kannst nun deinen Namen eingeben, um dich in der Highscore zu verewigen.</string>
     <string name="menu_show_highscores">Highscore anzeigen.</string>
+    <string name="label_result_time_penalty">Strafe für zu langes Warten!</string>
 </resources>
