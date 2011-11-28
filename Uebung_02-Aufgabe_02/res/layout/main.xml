@@ -3,20 +3,25 @@
 	android:orientation="vertical" 
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent"
-	android:weightSum="21"
 	>
-	<ListView 
+	<ProgressBar android:id="@+id/main_progressbar"
+        android:layout_width="fill_parent" 
+        android:layout_height="wrap_content"
+        style="@android:style/Widget.ProgressBar.Horizontal"
+		android:layout_weight="0"
+        />
+    <ListView 
 		android:id="@+id/main_listview"
 		android:layout_width="fill_parent" 
 		android:layout_height="fill_parent"
 		android:layout_weight="1"
-	/>
+		/>
 	<TextView 
 		android:id="@+id/status_textview"
 		android:layout_width="fill_parent"
-		android:layout_height="fill_parent" 
-		android:layout_weight="20"
-		android:text="Status ..." 
-	/>
+		android:layout_height="wrap_content" 
+		android:text="Status ..."
+		android:layout_weight="0"
+		/>
 </LinearLayout>
 
