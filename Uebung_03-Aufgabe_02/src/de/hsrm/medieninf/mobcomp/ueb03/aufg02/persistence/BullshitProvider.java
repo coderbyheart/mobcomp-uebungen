@@ -1,5 +1,6 @@
 package de.hsrm.medieninf.mobcomp.ueb03.aufg02.persistence;
 
+import de.hsrm.medieninf.mobcomp.ueb03.aufg02.entity.BullshitSheet;
 import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.UriMatcher;
@@ -24,39 +25,57 @@ public class BullshitProvider extends ContentProvider {
 		uriMatcher.addURI(AUTHORITY, "word/#", BULLSHIT_WORD_ENTRY);
 	}
 
+	private BullshitSheetDbAdapter dbc;
+	
+	/**
+	 * Wird beim Erzeugen aufgerufen
+	 */
 	@Override
-	public int delete(Uri arg0, String arg1, String[] arg2) {
-		// TODO Auto-generated method stub
+	public boolean onCreate() {
+		dbc = new BullshitSheetDbAdapter(getContext());
+		dbc.open();
+		return true;
+	}
+
+	/**
+	 * Löschen wird nicht unterstützt
+	 */
+	@Override
+	public int delete(Uri uri, String arg1, String[] arg2) {
 		return 0;
 	}
 
 	@Override
-	public String getType(Uri arg0) {
+	public String getType(Uri uri) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	/**
+	 * Legt eine neues Bullshit-Bingo-Blatt an
+	 */
 	@Override
-	public Uri insert(Uri arg0, ContentValues arg1) {
-		// TODO Auto-generated method stub
-		return null;
+	public Uri insert(Uri uri, ContentValues cv) {
+		switch(uriMatcher.match(uri)) {
+		case BULLSHIT_SHEET_LIST:
+			BullshitSheet bss = new BullshitSheet();
+			bss.setNwords(cv.getAsInteger(BullshitSheetDbAdapter.KEY_NWORDS));
+			dbc.persist(bss);
+			return null;
+		default:
+			return null;
+		}
 	}
 
 	@Override
-	public boolean onCreate() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public Cursor query(Uri arg0, String[] arg1, String arg2, String[] arg3,
+	public Cursor query(Uri uri, String[] arg1, String arg2, String[] arg3,
 			String arg4) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public int update(Uri arg0, ContentValues arg1, String arg2, String[] arg3) {
+	public int update(Uri uri, ContentValues arg1, String arg2, String[] arg3) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
