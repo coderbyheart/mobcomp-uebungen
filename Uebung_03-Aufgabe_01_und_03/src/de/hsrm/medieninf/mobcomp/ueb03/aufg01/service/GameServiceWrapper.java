@@ -27,6 +27,7 @@ public class GameServiceWrapper implements IGame {
 	protected Hinter hinter;
 	private BigInteger limit;
 	private ParameterRunnable<IGame> gameRunnable;
+	private Runnable penaltyRunnable;
 
 	private class IncomingHandler extends Handler {
 		@Override
@@ -46,6 +47,9 @@ public class GameServiceWrapper implements IGame {
 				hinter.update(guess);
 				guessRunnable.setParameter(guess);
 				guessRunnable.run();
+				break;
+			case GameService.MSG_PENALTY:
+				getPenaltyRunnable().run();
 				break;
 			default:
 				super.handleMessage(msg);
@@ -127,5 +131,13 @@ public class GameServiceWrapper implements IGame {
 	 */
 	public void resume() {
 		sendMessage(Message.obtain(null, GameService.MSG_RESUME));
+	}
+
+	public Runnable getPenaltyRunnable() {
+		return penaltyRunnable;
+	}
+
+	public void setPenaltyRunnable(Runnable penaltyRunnable) {
+		this.penaltyRunnable = penaltyRunnable;
 	}
 }

@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Messenger;
 import android.util.Log;
+import android.widget.Toast;
 import de.hsrm.medieninf.mobcomp.ueb03.aufg01.game.IGame;
 import de.hsrm.medieninf.mobcomp.ueb03.aufg01.service.GameService;
 import de.hsrm.medieninf.mobcomp.ueb03.aufg01.service.GameServiceWrapper;
@@ -52,6 +53,19 @@ public class NummernRatenActivityService extends NummernRatenActivity {
 					public void run() {
 						game = getParameter();
 						resetLayout();
+					}
+				});
+				gsw.setPenaltyRunnable(new Runnable() {
+					@Override
+					public void run() {
+						runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								Toast.makeText(NummernRatenActivityService.this,
+										R.string.label_result_time_penalty,
+										Toast.LENGTH_SHORT).show();
+							}
+						});
 					}
 				});
 			}

@@ -36,6 +36,7 @@ public class GameService extends Service {
 	public static final int MSG_PAUSE_RESULT = 8;
 	public static final int MSG_RESUME = 9;
 	public static final int MSG_RESUME_RESULT = 10;
+	public static final int MSG_PENALTY = 11;
 
 	public static final String KEY_GUESS_RESULT = "guess.result";
 	public static final String KEY_GUESS_TIME = "guess.time";
@@ -44,6 +45,8 @@ public class GameService extends Service {
 	private final Messenger messenger = new Messenger(new IncomingHandler());
 	private Game game;
 	private Timer timer;
+	private Messenger gameStarter;
+	
 	/**
 	 * Anzahl der Sekunden, nach denen automatisch ein Versuch hinzu kommt
 	 */
@@ -55,7 +58,8 @@ public class GameService extends Service {
 			switch (request.what) {
 			case MSG_START_GAME:
 				doStartGame(request.arg1);
-				sendMessage(request,
+				gameStarter = request.replyTo;
+				sendMessage(request.replyTo,
 						Message.obtain(null, MSG_START_GAME_RESULT));
 				break;
 			case MSG_GUESS:
@@ -66,18 +70,18 @@ public class GameService extends Service {
 				data.putLong(KEY_GUESS_TIME, guess.getTime());
 				data.putInt(KEY_GUESS_NUMBER_OF_TRY, guess.getNumberOfTry());
 				message.setData(data);
-				sendMessage(request, message);
+				sendMessage(request.replyTo, message);
 				break;
 			case MSG_TRIES:
-				sendMessage(request,
+				sendMessage(request.replyTo,
 						Message.obtain(null, MSG_TRIES_RESULT, doGetTries(), 0));
 				break;
 			case MSG_PAUSE:
-				sendMessage(request,
+				sendMessage(request.replyTo,
 						Message.obtain(null, MSG_PAUSE_RESULT, doPause(), 0));
 				break;
 			case MSG_RESUME:
-				sendMessage(request,
+				sendMessage(request.replyTo,
 						Message.obtain(null, MSG_RESUME_RESULT, doResume(), 0));
 				break;
 			default:
@@ -85,14 +89,14 @@ public class GameService extends Service {
 			}
 		}
 
-		private void sendMessage(Message request, Message response) {
-			if (request.replyTo == null)
+		private void sendMessage(Messenger rcpt, Message response) {
+			if (rcpt == null)
 				return;
 			try {
-				request.replyTo.send(response);
+				rcpt.send(response);
 			} catch (RemoteException e) {
 				Log.v(getClass().getCanonicalName(),
-						"Failed to send game created reply.");
+						"Failed to send game message.");
 			}
 		}
 	}
@@ -150,7 +154,13 @@ public class GameService extends Service {
 			@Override
 			public void run() {
 				game.createGuess(game.getLastGuess());
-				Log.v(getClass().getCanonicalName(), "Erzeuge Straf-Versuch.");
+				Message penaltyMessage = Message.obtain(null, MSG_PENALTY, game.getTries(), 0);
+				try {
+					gameStarter.send(penaltyMessage);
+				} catch (RemoteException e) {
+					Log.v(getClass().getCanonicalName(),
+							"Failed to send penalty.");
+				}
 			}
 		}, autoGuess * 1000, autoGuess * 1000);
 		return true;

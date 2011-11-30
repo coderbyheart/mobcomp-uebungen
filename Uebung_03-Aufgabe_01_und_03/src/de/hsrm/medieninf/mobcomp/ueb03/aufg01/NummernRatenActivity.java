@@ -153,13 +153,6 @@ public class NummernRatenActivity extends Activity {
 				readUserNumber();
 				game.createGuess(userNumber, new ParameterRunnable<Guess>() {
 					public void run() {
-						int lastGuessNumberOfTry = lastGuess == null ? 0 : lastGuess.getNumberOfTry(); 
-						if (lastGuessNumberOfTry + 1 != parameter.getNumberOfTry()) {
-							// Strafe!
-							Toast.makeText(NummernRatenActivity.this,
-									R.string.label_result_time_penalty, Toast.LENGTH_SHORT)
-									.show();
-						}
 						lastGuess = parameter;
 						if (parameter.isTooLow()) {
 							Toast.makeText(NummernRatenActivity.this,
